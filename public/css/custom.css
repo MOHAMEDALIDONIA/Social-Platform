@@ -1,7 +1,7 @@
 /* start user profile page */
  
 body {
-    margin-top: 40px;
+  
     min-height: 100%;
     background: #ebecf2;
 }
@@ -388,3 +388,40 @@ body {
     }
 }
 /* end user profile page */
+/* start user friend requests */
+      
+      .profile-image {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+    
+    .user-card {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        margin: 10px;
+    }
+/* end user friend requests */
+/* start user suggested connections */
+        
+        .user-card-suggest {
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            text-align: center;
+            padding: 1rem;
+        }
+        
+        .profile-image-suggest {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: auto;
+        }
+/* end user suggested connections */

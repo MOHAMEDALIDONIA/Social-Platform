@@ -32,6 +32,13 @@ Route::middleware('auth')->group(function () {
     Route::post('changepassword','ChangePassword')->name('change.password');
  });
 //------- End User Profile ------- //
+
+ //------- Start User actions ------- //
+ Route::prefix('/Users')->controller(App\Http\Controllers\Mvc\UserController::class)->group(function(){
+    Route::get('/SuggestedConnections','GetSuggestedConnections')->name('suggest.connections');
+    Route::get('/friend-requests','GetFriendRequests')->name('friend.requests');
+ });
+//------- End User actions ------- //
  
 
  
