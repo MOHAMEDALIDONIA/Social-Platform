@@ -2,7 +2,15 @@
     <div class="nav nav-pills nav-fill" id="nav-tab" role="tablist">
       <a href="{{route('suggest.connections')}}" class="nav-link"  type="button" >People you  know</a>
       <a href="{{route('friend.requests')}}" class="nav-link"  type="button" >Friend Requests</a>
-      <a class="nav-link"  type="button" >request</a>
+      <form method="POST" action="{{ route('logout') }}">
+        @csrf
+            <a href="route('logout')"
+                    onclick="event.preventDefault();
+                        this.closest('form').submit();"          
+                    class="nav-link"  type="button" >Logout</a>
+
+
+      </form>
      
 
     </div>
