@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\mvc;
 
 use App\Http\Controllers\Controller;
+use App\Models\FriendConnection;
 use App\Models\FriendRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -11,10 +12,9 @@ class UserController extends Controller
 {
     public function GetSuggestedConnections(){
         $userId = auth()->user()->id;
-        // fetch receiver ids by using user_id
-        $receiverIds = FriendRequest::receiverIdsForSender($userId);  
+      
         // fetch users don't send friend requests
-        $SuggestedConnections = User::suggestedConnections($userId,$receiverIds)->get();
+        $SuggestedConnections = User::suggestedConnections($userId)->get();
 
         return view('users.suggestedconnections' ,compact('SuggestedConnections'));
     }
@@ -42,5 +42,28 @@ class UserController extends Controller
      
         
        
+    }
+    public function AcceptFriendRequest(Request $request) {
+        //check friend request exist or not 
+        $friendrequest = FriendRequest::findOrFail($request->friend_request_id);
+
+        //add to friend connections table
+        FriendConnection::create([
+           'user_id' => $friendrequest->receiver_id,
+           'friend_id'=>$friendrequest->sender_id
+        ]);
+        //delete record friendrequest 
+        $friendrequest->delete();
+
+        return response()->json(['message'=>'Accept Friend Request Successfully']);
+    }
+    public function RejectFriendRequest(Request $request) {
+        //check friend request exist or not 
+        $friendrequest = FriendRequest::findOrFail($request->friend_request_id);
+
+        //delete record friendrequest 
+        $friendrequest->delete();
+        
+        return response()->json(['message'=>'Reject Friend Request Successfully']);
     }
 }

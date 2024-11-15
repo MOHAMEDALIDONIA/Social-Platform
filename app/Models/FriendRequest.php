@@ -15,15 +15,11 @@ class FriendRequest extends Model
        'receiver_id',
        'status'
     ];
-    public function userReceiver(){
+    public function receiver(){
         return $this->belongsTo(User::class,'receiver_id' ,'id');
     }
-    public function userSender(){
+    public function sender(){
         return $this->belongsTo(User::class,'sender_id','id');
-    }
-    public function scopeReceiverIdsForSender(Builder $query,$senderId)
-    {
-        return $query->where('sender_id', $senderId)->pluck('receiver_id');
     }
     public function scopeShowMyFriendRequest(Builder $query,$receiverId)
     {

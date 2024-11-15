@@ -48,9 +48,13 @@ class User extends Authenticatable
     public function userProfile(){
         return $this->hasOne(Userprofile::class,'user_id','id');
     }
-    public function scopeSuggestedConnections(Builder $query, $userId, $excludedIds)
+    public function scopeSuggestedConnections(Builder $query, $userId)
     {
-        return $query->whereNotIn('id', $excludedIds)
-                     ->where('id', '!=', $userId);
+        $friendIds = FriendConnection::where('user_id', $userId)->pluck('friend_id');
+        $requestReceiverIds = FriendRequest::where('sender_id', $userId)->pluck('receiver_id');
+    
+        return $query->where('id', '!=', $userId)
+                     ->whereNotIn('id', $friendIds)
+                     ->whereNotIn('id', $requestReceiverIds);
     }
 }

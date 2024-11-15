@@ -38,6 +38,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/SuggestedConnections','GetSuggestedConnections')->name('suggest.connections');
     Route::get('/friend-requests','GetFriendRequests')->name('friend.requests');
     Route::post('/send-friend-request','SendFriendRequest')->name('send.friend.request');
+    Route::post('/accept-friend-request','AcceptFriendRequest')->name('accept.friend.request');
+    Route::post('/reject-friend-request','RejectFriendRequest')->name('reject.friend.request');
  });
 //------- End User actions ------- //
  
