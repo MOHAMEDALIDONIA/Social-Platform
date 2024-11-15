@@ -19,7 +19,8 @@ class UserController extends Controller
         return view('users.suggestedconnections' ,compact('SuggestedConnections'));
     }
     public function GetFriendRequests(){
-        $FriendRequests = FriendRequest::where('receiver_id',auth()->user()->id)->get();
+        $userId = auth()->user()->id;
+        $FriendRequests = FriendRequest::ShowMyFriendRequest($userId)->get();
         return view('users.friendrequests',compact('FriendRequests'));
     }
     public function SendFriendRequest(Request $request){
