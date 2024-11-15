@@ -24,9 +24,17 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+ //------- Start User Profile ------- //
+ Route::prefix('/profile')->controller(App\Http\Controllers\Mvc\ProfileController::class)->group(function(){
+    Route::get('/{id}','index')->name('profile.view');
+    Route::get('edit/{id}','edit')->name('profile.edit');
+    Route::put('update/{id}','update')->name('profile.update');
+    Route::post('changepassword','ChangePassword')->name('change.password');
+ });
+//------- End User Profile ------- //
+ 
+
+ 
 });
 
 require __DIR__.'/auth.php';
