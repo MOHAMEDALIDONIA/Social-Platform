@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -46,5 +47,10 @@ class User extends Authenticatable
     ];
     public function userProfile(){
         return $this->hasOne(Userprofile::class,'user_id','id');
+    }
+    public function scopeSuggestedConnections(Builder $query, $userId, $excludedIds)
+    {
+        return $query->whereNotIn('id', $excludedIds)
+                     ->where('id', '!=', $userId);
     }
 }
