@@ -43,7 +43,16 @@ Route::middleware('auth')->group(function () {
  });
 //------- End User actions ------- //
  
+ //------- Start Posts ------- //
+ Route::prefix('/Posts')->controller(App\Http\Controllers\Mvc\PostController::class)->group(function(){
+    Route::Post('/store','store')->name('store.post');
+    Route::get('edit/{id}','edit')->name('post.edit');
+    Route::put('update/{id}','update')->name('post.update');
+    Route::get('/destory/{id}','destory')->name('delete.post');
+    Route::get('post-image/delete/{id}','destoryPostImage')->name('delete.post.image');
 
+ });
+//------- End posts ------- //
  
 });
 

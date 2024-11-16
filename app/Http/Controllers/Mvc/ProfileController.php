@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ChangeUserPassword;
 use App\Http\Requests\UpdateUserProfileRequest;
 use App\Models\FriendConnection;
+use App\Models\Post;
 use App\Models\User;
 use App\services\UserProfileServices;
 use Illuminate\Support\Facades\Auth;
@@ -25,7 +26,8 @@ class ProfileController extends Controller
     public function index(int $user_id){
         $user = User::FindOrFail($user_id);
         $userfriends = User::Friendslist($user_id)->get();
-        return view('profile.index',compact('user','userfriends'));
+        $userposts = Post::where('user_id',$user_id)->latest()->get();
+        return view('profile.index',compact('user','userfriends','userposts'));
     }
     public function edit(int $user_id){
         $user = User::FindOrFail($user_id);
