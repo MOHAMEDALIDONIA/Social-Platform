@@ -58,109 +58,121 @@
                   </nav>
                   <div class="tab-content" id="nav-tabContent">
                     <div class="tab-pane fade show active" id="nav-post" role="tabpanel" aria-labelledby="nav-post-tab" tabindex="0">
-                          <!--- \\\\\\\Post-->
-
-                          <div class="container" style="margin-top: 30px;">
-                            <div class="form-container">
-                                <h3 class="text-center mb-4">Create a Post</h3>
-                                
-                                <form method="POST" action="{{route('store.post')}}" enctype="multipart/form-data">
+                      <!-- Post Form -->
+                      <div class="container" style="margin-top: 30px;">
+                          <div class="form-container">
+                              <h3 class="text-center mb-4">Create a Post</h3>
+                              <form method="POST" action="{{route('store.post')}}" enctype="multipart/form-data">
                                   @csrf
-                                    <!-- Post Text -->
-                                    <div class="mb-3">
-                                        <label for="postText" class="form-label">Post Text</label>
-                                        <textarea class="form-control" name="content" id="postText" rows="4" placeholder="What's on your mind?"></textarea>
-                                        @error('content')
-                                        <small class="form-text text-danger">{{$message}}</small>
-                                        @enderror
-                                    </div>
-
-                                    <!-- Image Upload -->
-                                    <div class="mb-3">
-                                        <label for="postImages" class="form-label">Upload Images</label>
-                                        <input type="file" class="form-control" name="image[]" id="postImages" accept="image/*" multiple>
-                                        <div id="imagePreview" class="post-image-preview mt-2"></div>
-                                    </div>
-
-                                    <!-- Submit Button -->
-                                    <div class="d-grid">
-                                        <button type="submit" class="btn btn-primary">Post</button>
-                                    </div>
-                                </form>
-                            </div>
+                                  <!-- Post Text -->
+                                  <div class="mb-3">
+                                      <label for="postText" class="form-label">Post Text</label>
+                                      <textarea class="form-control" name="content" id="postText" rows="4" placeholder="What's on your mind?"></textarea>
+                                      @error('content')
+                                      <small class="form-text text-danger">{{$message}}</small>
+                                      @enderror
+                                  </div>
+                                  <!-- Image Upload -->
+                                  <div class="mb-3">
+                                      <label for="postImages" class="form-label">Upload Images</label>
+                                      <input type="file" class="form-control" name="image[]" id="postImages" accept="image/*" multiple>
+                                  </div>
+                                  <!-- Submit Button -->
+                                  <div class="d-grid">
+                                      <button type="submit" class="btn btn-primary">Post</button>
+                                  </div>
+                              </form>
                           </div>
-                          @forelse ($userposts as $post)
-                              <div class="card gedf-card" style="margin-top: 30px;">
-                                <div class="card-header">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <div class="mr-2">
-                                                <img class="rounded-circle" width="45" src="{{asset('storage/'.$user->image)}}" alt="">
-                                            </div>
-                                            <div style="margin-left: 5px;">
-                                                <div class="h5 m-0">{{ $user->name }}</div>
-                                                <div class="h7 text-muted">{{ $user->email }}</div>
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <div class="dropdown">
-                                                <button class="btn btn-link dropdown-toggle" type="button" id="gedf-drop1" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                    <i class="fa fa-ellipsis-h"></i>
-                                                </button>
-                                                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="gedf-drop1">
-                                                    <div class="h6 dropdown-header">Configuration</div>
-                                                    <a class="dropdown-item" href="{{route('post.edit',$post->id)}}">Edit</a>
-                                                    <a class="dropdown-item" href="{{route('delete.post',$post->id)}}">Delete</a>
-                                                    
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                      </div>
+                  
+                      <!-- Display Posts -->
+                      @forelse ($userposts as $post)
+                      <div class="card gedf-card" style="margin-top: 30px;">
+                          <div class="card-header">
+                              <div class="d-flex justify-content-between align-items-center">
+                                  <div class="d-flex justify-content-between align-items-center">
+                                      <div class="mr-2">
+                                          <img class="rounded-circle" width="45" src="{{asset('storage/'.$user->image)}}" alt="">
+                                      </div>
+                                      <div style="margin-left: 5px;">
+                                          <div class="h5 m-0">{{ $user->name }}</div>
+                                          <div class="h7 text-muted">{{ $user->email }}</div>
+                                      </div>
+                                  </div>
+                                  <div>
+                                      <div class="dropdown">
+                                          <button class="btn btn-link dropdown-toggle" type="button" id="gedf-drop1" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                              <i class="fa fa-ellipsis-h"></i>
+                                          </button>
+                                          <div class="dropdown-menu dropdown-menu-right" aria-labelledby="gedf-drop1">
+                                              <div class="h6 dropdown-header">Configuration</div>
+                                              <a class="dropdown-item" href="{{route('post.edit',$post->id)}}">Edit</a>
+                                              <a class="dropdown-item" href="{{route('delete.post',$post->id)}}">Delete</a>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+                  
+                          <!-- Post Content -->
+                          <div class="card-body">
+                              <div class="text-muted h7 mb-2"><i class="fa fa-clock-o"></i> {{$post->created_at}}</div>
+                              <p class="card-text">{{ $post->content }}</p>
+                          </div>
+                  
+                          <!-- Carousel for Images -->
+                          <div id="postImagesCarousel{{ $post->id }}" class="carousel slide" data-bs-ride="carousel">
+                              <div class="carousel-inner">
+                                  @foreach($post->images as $index => $image)
+                                  <div class="carousel-item {{ $index === 0 ? 'active' : '' }}">
+                                      <img src="{{ asset('storage/' . $image->image) }}" class="d-block w-100" style="width:400px;height:700px;" alt="Post Image">
+                                  </div>
+                                  @endforeach
+                              </div>
+                              <button class="carousel-control-prev" type="button" data-bs-target="#postImagesCarousel{{ $post->id }}" data-bs-slide="prev">
+                                  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                  <span class="visually-hidden">Previous</span>
+                              </button>
+                              <button class="carousel-control-next" type="button" data-bs-target="#postImagesCarousel{{ $post->id }}" data-bs-slide="next">
+                                  <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                  <span class="visually-hidden">Next</span>
+                              </button>
+                          </div>
+                          <div class="card-footer d-flex justify-content-between align-items-center">
+                            <a href="#" class="btn btn-link text-decoration-none"><i class="fa fa-gittip"></i> Likes (7)</a>
+                            <a href="#" class="btn btn-link text-decoration-none" ><i class="fa fa-comment"></i> Comments({{$post->comments->count() ?? 0}})</a>
+                         </div>
+                  
+                          <!-- Comments Section -->
+                          <div class="card-footer">
+                             
+                              <h6>Comments</h6>
                             
-                                <div class="card-body">
-                                    <div class="text-muted h7 mb-2"><i class="fa fa-clock-o"></i> {{$post->created_at}}</div>
-                                    
-                               
-                                    <p class="card-text">
-                                       {{$post->content}}
-                                    </p>
-                                </div>
-                              
-                                <!-- Carousel for Images -->
-                                <div id="postImagesCarousel{{ $post->id }}" class="carousel slide" data-bs-ride="carousel">
-                                    <div class="carousel-inner">
-                                        <!-- Loop through images -->
-                                        @foreach($post->images as $index => $image)
-                                            <div class="carousel-item {{ $index === 0 ? 'active' : '' }}">
-                                                <img src="{{ asset('storage/' . $image->image) }}" class="d-block w-100" style="width:400px;height:700px;"  alt="Post Image">
-                                            </div>
-                                        @endforeach
-                                    </div>
-                                    <!-- Carousel controls -->
-                                    <button class="carousel-control-prev" type="button" data-bs-target="#postImagesCarousel{{ $post->id }}" data-bs-slide="prev">
-                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                        <span class="visually-hidden">Previous</span>
-                                    </button>
-                                    <button class="carousel-control-next" type="button" data-bs-target="#postImagesCarousel{{ $post->id }}" data-bs-slide="next">
-                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                        <span class="visually-hidden">Next</span>
-                                    </button>
-                                </div>
-                            
-                                <div class="card-footer">
-                                    <a href="#" class="card-link"><i class="fa fa-gittip"></i> Like</a>
-                                    <a href="#" class="card-link"><i class="fa fa-comment"></i> Comment</a>
-                                   
-                                </div>
-                            </div>
-                          @empty
-                              
-                          @endforelse
-                       
-                        <!-- Post /////-->
-
-                    </div>
+                              <div id="commentsSection{{ $post->id }}" class="comments-container" style="max-height: 100px; overflow-y: auto;">
+                                  <!-- Display up to 2-3 comments initially -->
+                                  @foreach($post->comments as $comment)
+                                  <div class="comment">
+                                      <strong>{{ $comment->user->name }}</strong>: {{ $comment->content }}
+                                  </div>
+                                  @endforeach
+                              </div>
+                  
+                          
+                  
+                              <!-- Add Comment Form -->
+                              <form method="POST" action="{{route('post.comment', $post->id)}}" class="formcomment mt-2" data-post-id="{{ $post->id }}" >
+                                  @csrf
+                                  <div class="input-group">
+                                      <input type="text" name="content" id="content{{$post->id}}" class="form-control" placeholder="Write a comment..." required>
+                                      <button class="btn btn-primary" type="submit">Comment</button>
+                                  </div>
+                              </form>
+                          </div>
+                      </div>
+                      @empty
+                      <p>No posts available.</p>
+                      @endforelse
+                  </div>
               
                     <div class="tab-pane fade" id="nav-friend" role="tabpanel" aria-labelledby="nav-friend-tab" tabindex="0">
                       <div class="container mt-5">
@@ -193,7 +205,54 @@
 </div>
 @endsection
 @section('scripts')
-    
+<meta name="csrf-token" content="{{ csrf_token() }}">
+<script>
+    $(document).ready(function() {
+        // Set up CSRF token for all AJAX requests
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+      
+        $('.formcomment').on('submit', function(e) {
+           
+          e.preventDefault(); 
+          
+            let  postId = $(this).data('post-id');
+            let  content = $('#content' + postId).val();
+            
+
+     
+            $.ajax({
+                url: `/Posts/post-comment/${postId}`, // Template literal with the route structure
+                method: 'POST',
+                data: { 
+                      content: content  
+                },
+                success: function(response) {
+                   if (response.message = 'success') {
+                      $('#commentsSection' + postId).append(`
+                          <div class="comment"><strong>${response.user}</strong>: ${content}</div>
+                      `);
+                      $('#content' + postId).val('');
+
+                      // Increment the comment count
+                      let commentCount = parseInt($('#commentCount' + postId).text());
+                      $('#commentCount' + postId).text(commentCount + 1);
+                   }
+ 
+                },
+                error: function(xhr) {
+                    console.error("An error occurred:", xhr.responseText);
+                    alert("There was an error adding your comment. Please try again.");
+                }
+            });
+               
+        });
+    });
+</script> 
 <!-- JavaScript to Preview Images -->
 <script>
   const postImages = document.getElementById('postImages');
@@ -212,6 +271,8 @@
       });
   });
 </script>
+<!-- Script to Show More Comments -->
+
 @endsection
 
 

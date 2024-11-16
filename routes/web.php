@@ -50,6 +50,7 @@ Route::middleware('auth')->group(function () {
     Route::put('update/{id}','update')->name('post.update');
     Route::get('/destory/{id}','destory')->name('delete.post');
     Route::get('post-image/delete/{id}','destoryPostImage')->name('delete.post.image');
+    Route::post('/post-comment/{id}','CreateComment')->name('post.comment');
 
  });
 //------- End posts ------- //

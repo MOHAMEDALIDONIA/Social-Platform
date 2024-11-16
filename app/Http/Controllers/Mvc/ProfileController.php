@@ -26,7 +26,7 @@ class ProfileController extends Controller
     public function index(int $user_id){
         $user = User::FindOrFail($user_id);
         $userfriends = User::Friendslist($user_id)->get();
-        $userposts = Post::where('user_id',$user_id)->latest()->get();
+        $userposts = Post::where('user_id',$user_id)->with('comments')->latest()->get();
         return view('profile.index',compact('user','userfriends','userposts'));
     }
     public function edit(int $user_id){

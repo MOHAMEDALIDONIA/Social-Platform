@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Mvc;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Comment;
 use App\Models\Post;
 use App\Models\PostImage;
 use App\traits\savephoto;
@@ -95,6 +96,22 @@ class PostController extends Controller
         }
         $postImage->delete();
         return redirect()->back()->with(['message'=>'Post Image Deleted Successfully']);
+    }
+    public function CreateComment(Request $request,int $post_id){
+           //validation request 
+           $validation = $request->validate([
+              'content' => ['required','string']
+           ]);
+           // add comment to database
+          $comment = Comment::create([
+               'user_id' => auth()->user()->id,
+               'post_id'=> $post_id,
+               'content'=>$validation['content']
+           ]);
+           //fecth user name 
+             $username = $comment->user->name;
+           //success 
+           return response()->json(['message'=>'success','user'=>$username]);
     }
 
 }
