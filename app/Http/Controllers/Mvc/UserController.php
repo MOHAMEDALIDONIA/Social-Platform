@@ -66,4 +66,7 @@ class UserController extends Controller
         
         return response()->json(['message'=>'Reject Friend Request Successfully']);
     }
+    public function ShowFriendsUser(){
+        
+    }
 }

@@ -5,9 +5,11 @@ namespace App\Http\Controllers\Mvc;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ChangeUserPassword;
 use App\Http\Requests\UpdateUserProfileRequest;
+use App\Models\FriendConnection;
 use App\Models\User;
 use App\services\UserProfileServices;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 
@@ -22,7 +24,8 @@ class ProfileController extends Controller
     }
     public function index(int $user_id){
         $user = User::FindOrFail($user_id);
-        return view('profile.index',compact('user'));
+        $userfriends = User::Friendslist($user_id)->get();
+        return view('profile.index',compact('user','userfriends'));
     }
     public function edit(int $user_id){
         $user = User::FindOrFail($user_id);

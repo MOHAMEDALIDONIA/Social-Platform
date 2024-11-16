@@ -23,6 +23,6 @@ class FriendRequest extends Model
     }
     public function scopeShowMyFriendRequest(Builder $query,$receiverId)
     {
-        return $query->select('id','sender_id')->where('receiver_id',$receiverId)->with('userSender');
+        return $query->select('id','sender_id')->where('receiver_id',$receiverId)->with('sender');
     }
 }

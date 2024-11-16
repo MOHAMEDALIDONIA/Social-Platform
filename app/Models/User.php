@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\DB;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
@@ -48,6 +49,10 @@ class User extends Authenticatable
     public function userProfile(){
         return $this->hasOne(Userprofile::class,'user_id','id');
     }
+    public function friends()
+    {
+        return $this->hasMany(FriendConnection::class, 'user_id','id');
+    }
     public function scopeSuggestedConnections(Builder $query, $userId)
     {
         $friendIds = FriendConnection::where('user_id', $userId)->pluck('friend_id');
@@ -56,5 +61,18 @@ class User extends Authenticatable
         return $query->where('id', '!=', $userId)
                      ->whereNotIn('id', $friendIds)
                      ->whereNotIn('id', $requestReceiverIds);
+    }
+    public function scopeFriendslist(Builder $query, $userId)
+    {
+      return $query->whereIn('id', function ($query) use ($userId){
+                    $query->select('friend_id')
+                        ->from('friend_connections')
+                        ->where('user_id', $userId)
+                        ->union(
+                            DB::table('friend_connections')
+                            ->select('user_id')
+                            ->where('friend_id', $userId)
+                        );
+            });
     }
 }

@@ -2,6 +2,7 @@
     <div class="nav nav-pills nav-fill" id="nav-tab" role="tablist">
       <a href="{{route('suggest.connections')}}" class="nav-link"  type="button" >People you  know</a>
       <a href="{{route('friend.requests')}}" class="nav-link"  type="button" >Friend Requests</a>
+      <a href="{{route('profile.view',auth()->user()->id)}}" class="nav-link"  type="button" >My Profile</a>
       <form method="POST" action="{{ route('logout') }}">
         @csrf
             <a href="route('logout')"
