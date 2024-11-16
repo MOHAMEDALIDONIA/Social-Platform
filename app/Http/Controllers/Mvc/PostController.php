@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Mvc;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Comment;
+use App\Models\Like;
 use App\Models\Post;
 use App\Models\PostImage;
 use App\traits\savephoto;
@@ -112,6 +113,20 @@ class PostController extends Controller
              $username = $comment->user->name;
            //success 
            return response()->json(['message'=>'success','user'=>$username]);
+    }
+    public function likePost(Request $request,int $post_id){
+              // add like to database
+              $UserLikedPost = Like::where('user_id',auth()->user()->id)->where('post_id',$post_id);
+              if ($UserLikedPost->exists()) {
+                 $UserLikedPost->delete();
+              } else {
+                $UserLikedPost->create([
+                   'user_id' => auth()->user()->id,
+                   'post_id'=>$post_id
+                ]);
+              }
+              $likes = Like::where('post_id',$post_id)->count();
+             return response()->json(['message'=>'success','likes_count'=>$likes]);
     }
 
 }

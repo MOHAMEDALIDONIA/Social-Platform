@@ -138,36 +138,71 @@
                                   <span class="visually-hidden">Next</span>
                               </button>
                           </div>
+                           <!-- Likes and Comments Section -->
                           <div class="card-footer d-flex justify-content-between align-items-center">
-                            <a href="#" class="btn btn-link text-decoration-none"><i class="fa fa-gittip"></i> Likes (7)</a>
-                            <a href="#" class="btn btn-link text-decoration-none" ><i class="fa fa-comment"></i> Comments({{$post->comments->count() ?? 0}})</a>
-                         </div>
-                  
+                            <!-- Likes with Heart Button and Modal Trigger -->
+                            <div class="d-flex align-items-center">
+                              <!-- Likes Link with Modal Trigger -->
+                              <a href="javascript:void(0);" class="btn btn-link text-decoration-none me-2" onclick="showLikesModal({{ $post->id }})">
+                                  <i class="fa fa-gittip"></i> Likes (<span id="likesCount{{ $post->id }}">{{ $post->likes->count() ?? 0 }}</span>)
+                              </a>
+                              @if ( $post->likes()->where('user_id', auth()->user()->id)->exists())
+                                  <button id="likeButton{{ $post->id }}" class="btn btn-link p-0" onclick="toggleLike({{ $post->id }})" style="font-size: 1.5em; .fa-heart-o {color: blue;} .active-heart {color: red;}">
+                                    <i class="fa fa-heart active-heart" id="heartIcon{{ $post->id }}"></i>
+                                </button>
+                              @else
+                                  <button id="likeButton{{ $post->id }}" class="btn btn-link p-0" onclick="toggleLike({{ $post->id }})" style="font-size: 1.5em; .fa-heart-o {color: blue;} .active-heart {color: red;}">
+                                    <i class="fa fa-heart-o "  id="heartIcon{{ $post->id }}"></i>
+                                </button>
+                              @endif
+
+                          </div>
+                         
+
+                            <!-- Comments Link with Count -->
+                            <a href="#" class="btn btn-link text-decoration-none">
+                                <i class="fa fa-comment"></i> Comments (<span id="commentCount{{ $post->id }}">{{ $post->comments->count() ?? 0 }}</span>)
+                            </a>
+                          </div>
+
                           <!-- Comments Section -->
                           <div class="card-footer">
-                             
-                              <h6>Comments</h6>
-                            
-                              <div id="commentsSection{{ $post->id }}" class="comments-container" style="max-height: 100px; overflow-y: auto;">
-                                  <!-- Display up to 2-3 comments initially -->
-                                  @foreach($post->comments as $comment)
-                                  <div class="comment">
-                                      <strong>{{ $comment->user->name }}</strong>: {{ $comment->content }}
-                                  </div>
-                                  @endforeach
-                              </div>
-                  
-                          
-                  
-                              <!-- Add Comment Form -->
-                              <form method="POST" action="{{route('post.comment', $post->id)}}" class="formcomment mt-2" data-post-id="{{ $post->id }}" >
-                                  @csrf
-                                  <div class="input-group">
-                                      <input type="text" name="content" id="content{{$post->id}}" class="form-control" placeholder="Write a comment..." required>
-                                      <button class="btn btn-primary" type="submit">Comment</button>
-                                  </div>
-                              </form>
+                            <h6>Comments</h6>
+
+                            <!-- Scrollable Comments Container -->
+                            <div id="commentsSection{{ $post->id }}" class="comments-container" style="max-height: 100px; overflow-y: auto;">
+                                @foreach($post->comments as $comment)
+                                <div class="comment">
+                                    <strong>{{ $comment->user->name }}</strong>: {{ $comment->content }}
+                                </div>
+                                @endforeach
+                            </div>
+
+                            <!-- Add Comment Form -->
+                            <form method="POST" action="{{ route('post.comment', $post->id) }}" class="formcomment mt-2" data-post-id="{{ $post->id }}">
+                                @csrf
+                                <div class="input-group">
+                                    <input type="text" name="content" id="content{{ $post->id }}" class="form-control" placeholder="Write a comment..." required>
+                                    <button class="btn btn-primary" type="submit">Comment</button>
+                                </div>
+                            </form>
                           </div>
+
+                          <!-- Modal for Likes -->
+                          <div class="modal fade" id="likesModal{{ $post->id }}" tabindex="-1" aria-labelledby="likesModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="likesModalLabel">Likes</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body" id="likesList{{ $post->id }}">
+                                        <!-- List of users who liked the post will be loaded here -->
+                                    </div>
+                                </div>
+                            </div>
+                          </div>
+
                       </div>
                       @empty
                       <p>No posts available.</p>
@@ -215,43 +250,84 @@
             }
         });
 
-      
+        // Handle Comment Submission
         $('.formcomment').on('submit', function(e) {
-           
-          e.preventDefault(); 
-          
-            let  postId = $(this).data('post-id');
-            let  content = $('#content' + postId).val();
-            
+            e.preventDefault(); 
+            let postId = $(this).data('post-id');
+            let content = $('#content' + postId).val();
 
-     
             $.ajax({
-                url: `/Posts/post-comment/${postId}`, // Template literal with the route structure
+                url: `/Posts/post-comment/${postId}`,
                 method: 'POST',
-                data: { 
-                      content: content  
-                },
+                data: { content: content },
                 success: function(response) {
-                   if (response.message = 'success') {
-                      $('#commentsSection' + postId).append(`
-                          <div class="comment"><strong>${response.user}</strong>: ${content}</div>
-                      `);
-                      $('#content' + postId).val('');
+                    if (response.message === 'success') {
+                        $('#commentsSection' + postId).append(`
+                            <div class="comment"><strong>${response.user}</strong>: ${content}</div>
+                        `);
+                        $('#content' + postId).val(''); // Clear input field
 
-                      // Increment the comment count
-                      let commentCount = parseInt($('#commentCount' + postId).text());
-                      $('#commentCount' + postId).text(commentCount + 1);
-                   }
- 
+                        // Increment comment count
+                        let commentCount = parseInt($('#commentCount' + postId).text());
+                        $('#commentCount' + postId).text(commentCount + 1);
+                    }
                 },
                 error: function(xhr) {
                     console.error("An error occurred:", xhr.responseText);
                     alert("There was an error adding your comment. Please try again.");
                 }
             });
-               
         });
     });
+
+    // Toggle Like with Heart Button
+    function toggleLike(postId) {
+        $.ajax({
+            url: `/Posts/post-like/${postId}`,
+            method: 'POST',
+            success: function(response) {
+               let heartIcon = $('#heartIcon' + postId);
+                let likesCount = $('#likesCount' + postId);
+
+                if (heartIcon.hasClass('fa-heart-o')) {
+                    heartIcon.removeClass('fa-heart-o').addClass('fa-heart active-heart');
+                } else {
+                    heartIcon.removeClass('fa-heart active-heart').addClass('fa-heart-o');
+                }
+
+                // Update likes count
+                likesCount.text(response.likes_count);
+            },
+            error: function(xhr) {
+                console.error("An error occurred:", xhr.responseText);
+                alert("There was an error updating your like. Please try again.");
+            }
+        });
+    }
+
+    // Show Likes Modal
+    function showLikesModal(postId) {
+        $('#likesModal' + postId).modal('show'); // Show the modal
+
+        // Fetch and display users who liked the post
+        $.ajax({
+            url: `/Posts/post-likes/${postId}`,
+            method: 'GET',
+            success: function(response) {
+                let likesList = $('#likesList' + postId);
+                likesList.empty(); // Clear existing list
+
+                // Append each user to the likes list
+                response.users.forEach(user => {
+                    likesList.append(`<div>${user.name}</div>`);
+                });
+            },
+            error: function(xhr) {
+                console.error("An error occurred:", xhr.responseText);
+                alert("There was an error loading likes. Please try again.");
+            }
+        });
+    }
 </script> 
 <!-- JavaScript to Preview Images -->
 <script>
@@ -271,7 +347,7 @@
       });
   });
 </script>
-<!-- Script to Show More Comments -->
+
 
 @endsection
 
