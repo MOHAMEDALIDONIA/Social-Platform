@@ -2,6 +2,7 @@
 namespace App\traits;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 
 Trait apiTraits {
@@ -19,7 +20,7 @@ Trait apiTraits {
           'number'=>$NumSuccess
           ]);
   }
-  public function ReturnData($key,$value,$message = "",$NumSuccess ='00000'){
+  public function ReturnData($key,$value,$message = "",$NumSuccess ='0000'){
           return response()->json([
               'status'=>'true',
               'message'=>$message,
@@ -27,6 +28,13 @@ Trait apiTraits {
                $key=>$value
           ]);
   }   
+  public function ReturnValidationError($request,$rules){
+
+        $validation = Validator::make($request->all(),$rules);
+        if ($validation->fails()) {
+          return $this->ReturnErrorMessage($validation->messages()->first(),'900');
+        }
+  }
 
 }
 ?>

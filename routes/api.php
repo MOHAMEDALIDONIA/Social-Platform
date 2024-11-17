@@ -19,12 +19,18 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:sanctum')->group(function() {
     Route::delete('/logout', [AuthController::class, 'logout']);
+     //------- Start User actions ------- //
+ Route::prefix('/Users')->controller(UserController::class)->group(function(){
+    Route::get('/SuggestedConnections','GetSuggestedConnections');
+    Route::get('/friend-requests','GetFriendRequests');
+    Route::post('/send-friend-request','SendFriendRequest');
+    Route::post('/accept-friend-request','AcceptFriendRequest');
+    Route::delete('/reject-friend-request','RejectFriendRequest');
+ });
+//------- End User actions ------- //
 });
-//36|p76oy7oLjZh0zkLyFCazkvOCGzcyXzUmRZTPESk127b4ee2f
-Route::post('index',[UserController::class,'index']);
-Route::post('store',[UserController::class,'store']);
-Route::post('delete',[UserController::class,'delete']);
-Route::post('update',[UserController::class,'update']);
+
+
 Route::middleware(['CheckUserAuthenticated'])->group(function(){
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);

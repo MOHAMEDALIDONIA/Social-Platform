@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\FriendConnection;
 use App\Models\FriendRequest;
 use App\Models\User;
+use App\services\UserServices;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
@@ -14,7 +15,7 @@ class UserController extends Controller
         $userId = auth()->user()->id;
       
         // fetch users don't send friend requests
-        $SuggestedConnections = User::suggestedConnections($userId)->get();
+        $SuggestedConnections = User::suggestedConnections($userId)->paginate(12);
 
         return view('users.suggestedconnections' ,compact('SuggestedConnections'));
     }
@@ -23,21 +24,12 @@ class UserController extends Controller
         $FriendRequests = FriendRequest::ShowMyFriendRequest($userId)->get();
         return view('users.friendrequests',compact('FriendRequests'));
     }
-    public function SendFriendRequest(Request $request){
+    public function SendFriendRequest(Request $request,UserServices $service){
         // add friend request to database
         $senderId = auth()->user()->id;
         $receiverId = $request->friend_id;
 
-       if (FriendRequest::where('sender_id',$senderId)->where('receiver_id',$receiverId)->exists()) {
-          return response()->json(['message' => 'Friend request already exists.']);
-       } else {
-          FriendRequest::create([
-            'sender_id' => $senderId,
-            'receiver_id'=>$receiverId,
-            'status'=>'panding'
-          ]);
-         return response()->json(['message' => 'success']);
-       }
+      return $service->CheckFriendRequestExist($senderId,$receiverId);
       
      
         
@@ -66,7 +58,5 @@ class UserController extends Controller
         
         return response()->json(['message'=>'Reject Friend Request Successfully']);
     }
-    public function ShowFriendsUser(){
-        
-    }
+  
 }

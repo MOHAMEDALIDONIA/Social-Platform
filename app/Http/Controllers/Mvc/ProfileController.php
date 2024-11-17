@@ -8,7 +8,7 @@ use App\Http\Requests\UpdateUserProfileRequest;
 use App\Models\FriendConnection;
 use App\Models\Post;
 use App\Models\User;
-use App\services\UserProfileServices;
+use App\services\UserServices;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -19,7 +19,7 @@ class ProfileController extends Controller
     
     protected $Service;
 
-    public function __construct(UserProfileServices $Service)
+    public function __construct(UserServices $Service)
     {
         $this->Service = $Service;
     }

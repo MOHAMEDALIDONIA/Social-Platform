@@ -16,6 +16,9 @@
             </div>
         </div>
     @endforeach  
+    <div class="pagination justify-content-center">
+        {{$SuggestedConnections->links() }}
+    </div> 
  </div>    
 </div>
 @endsection

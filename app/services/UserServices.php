@@ -1,11 +1,13 @@
 <?php
 namespace App\services;
 
+use App\Models\FriendRequest;
+use App\traits\apiTraits;
 use App\traits\savephoto;
 use Illuminate\Support\Facades\File;
 
-class UserProfileServices{
-    use savephoto;
+class UserServices{
+    use savephoto,apiTraits;
     public function UpdateUserData($user,$request){
                 //validation of request
                 $validation = $request->validated();
@@ -35,6 +37,20 @@ class UserProfileServices{
             );
        
     }
+    public function CheckFriendRequestExist($senderId,$receiverId){
+        if (FriendRequest::where('sender_id',$senderId)->where('receiver_id',$receiverId)->exists()) {
+           return $this->ReturnErrorMessage("Friend request already exists.","410");
+           
+         } else {
+            FriendRequest::create([
+              'sender_id' => $senderId,
+              'receiver_id'=>$receiverId,
+              'status'=>'panding'
+            ]);
+            return $this->ReturnSuccessMessage("Friend request Send Successfully");
+         }
+    }
+
        
     
 }
