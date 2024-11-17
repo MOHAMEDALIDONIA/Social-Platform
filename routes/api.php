@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\ProfileController;
 use App\Http\Middleware\CheckUserLogin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -28,6 +29,11 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::delete('/reject-friend-request','RejectFriendRequest');
  });
 //------- End User actions ------- //
+//------- Start User Profile ------- //
+Route::get('profile/edit/{id}',[ProfileController::class,'edit']);
+Route::post('changepassword',[ProfileController::class,'ChangePassword']);
+Route::apiResource('profiles',ProfileController::class);
+//------- End User Profile ------- //
 });
 
 

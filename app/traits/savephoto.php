@@ -2,6 +2,7 @@
 namespace App\traits;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\ImageManager;
 
@@ -24,6 +25,17 @@ Trait savephoto {
         
       
 
+    }
+    public function CheckImageExist($request,$oldImage , $flodername ){
+         //if request exists in image delete from folder and add new photo
+         if ($request->hasFile('image')) {
+            if(File::exists(public_path('storage/'.$oldImage))){
+                File::delete(public_path('storage/'.$oldImage));
+            }
+            $image=$this->SaveImage($request->file('image'),$flodername,600,600); 
+         
+            return $image;
+        }
     }
 
 }

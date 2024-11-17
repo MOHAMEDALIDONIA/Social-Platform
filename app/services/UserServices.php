@@ -10,30 +10,32 @@ class UserServices{
     use savephoto,apiTraits;
     public function UpdateUserData($user,$request){
                 //validation of request
-                $validation = $request->validated();
-
-                //if request exists in image delete from folder and add new photo
-                if ($request->hasFile('image')) {
-                    if(File::exists(public_path('storage/'.$user->image))){
-                        File::delete(public_path('storage/'.$user->image));
-                    }
-                    $image=$this->SaveImage($request->file('image'),'users\uploads\avaters',600,600); 
-                 
+                $rules= [    'name' => ['required', 'string', 'max:255'],
+                          'email' => ['required', 'string', 'email', 'max:255'],
+                          'image'=>['nullable','mimes:jpg,jpeg,png'],
+                          'bio'=>['nullable','string']
+                        ];
+                $message = $this->ReturnValidationError($request,$rules);
+                if(isset($message)){
+                  return $message;
                 }
+
+              //check image exist
+             $image = $this->CheckImageExist($request,$user->image,'users\uploads\avaters');
                 //insert image to request
-                $validation['image']=$image ?? $user->image;
+                $request->image =$image ?? $user->image;
                 
               //update user data
               $user->update([
-                 'name'=>$validation['name'],
-                 'email' =>$validation['email'],
-                 'image' => $validation['image'] 
+                 'name'=>$request->name,
+                 'email' =>$request->email,
+                 'image' => $request->image 
                  
               ]);
               //add or update user bio
               $user->userProfile()->updateOrCreate(
                 ['user_id' => $user->id],
-                ['bio' => $validation['bio']]
+                ['bio' => $request->bio]
             );
        
     }
