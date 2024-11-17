@@ -83,7 +83,7 @@
         
                 <!-- Post Content -->
                 <div class="card-body">
-                    <div class="text-muted h7 mb-2"><i class="fa fa-clock-o"></i> {{$post->created_at}}</div>
+                    <div class="text-muted h7 mb-2"><i class="fa fa-clock-o"></i> {{$post->created_at->diffForHumans()}}</div>
                     <p class="card-text">{{ $post->content }}</p>
                 </div>
         
