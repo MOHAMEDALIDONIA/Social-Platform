@@ -3,6 +3,7 @@
       <a href="{{route('suggest.connections')}}" class="nav-link"  type="button" >People you  know</a>
       <a href="{{route('friend.requests')}}" class="nav-link"  type="button" >Friend Requests</a>
       <a href="{{route('profile.view',auth()->user()->id)}}" class="nav-link"  type="button" >My Profile</a>
+      <a href="{{route('home.page')}}" class="nav-link"  type="button" >Home</a>
       <form method="POST" action="{{ route('logout') }}">
         @csrf
             <a href="route('logout')"

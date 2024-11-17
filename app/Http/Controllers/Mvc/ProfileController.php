@@ -31,11 +31,13 @@ class ProfileController extends Controller
     }
     public function edit(int $user_id){
         $user = User::FindOrFail($user_id);
+        $this->authorize('update', $user);
         return view('profile.edit',compact('user'));
     }
     public function update(UpdateUserProfileRequest $request , int $user_id){
         // check user found
         $user = User::FindOrFail($user_id);
+        $this->authorize('update', $user);
       
         //update user data 
         $this->Service->UpdateUserData($user,$request);

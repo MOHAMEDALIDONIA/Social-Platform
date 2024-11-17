@@ -15,15 +15,16 @@ use App\traits\savephoto;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+
 Route::get('/test',[App\Http\Controllers\TestController::class,'test']);
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
+   //------- Start User Profile ------- //
+    Route::get('/', [App\Http\Controllers\Mvc\HomeController::class,'view'])->name('home.page');
+  //------- End User Profile ------- //
  //------- Start User Profile ------- //
  Route::prefix('/profile')->controller(App\Http\Controllers\Mvc\ProfileController::class)->group(function(){
     Route::get('/{id}','index')->name('profile.view');
@@ -52,6 +53,7 @@ Route::middleware('auth')->group(function () {
     Route::get('post-image/delete/{id}','destoryPostImage')->name('delete.post.image');
     Route::post('/post-comment/{id}','CreateComment')->name('post.comment');
     Route::post('/post-like/{id}','likePost')->name('user.like.post');
+    Route::get('/post-users-likes/{id}','PostLikes')->name('post.likes');
 
  });
 //------- End posts ------- //

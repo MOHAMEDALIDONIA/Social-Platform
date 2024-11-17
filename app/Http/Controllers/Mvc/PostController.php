@@ -8,6 +8,7 @@ use App\Models\Comment;
 use App\Models\Like;
 use App\Models\Post;
 use App\Models\PostImage;
+use App\Models\User;
 use App\traits\savephoto;
 use Illuminate\Support\Facades\File;
 
@@ -43,10 +44,12 @@ class PostController extends Controller
     }
     public function edit(Request $request,int $post_id){
         $post = Post::findOrFail($post_id);
+        $this->authorize('crudPost', $post->user);
         return view('post.edit',compact('post'));
     }
     public function update(Request $request,int $post_id){
          $post = Post::findOrFail($post_id);
+         $this->authorize('crudPost', $post->user);
          //validation  request
          $validation = $request->validate([
             'content' => ['required', 'string'],
@@ -74,6 +77,7 @@ class PostController extends Controller
     }
     public function destory(int $post_id){
         $post = Post::findOrFail($post_id);
+        $this->authorize('crudPost', $post->user);
         if($post->images()){
             foreach($post->images() as $image){
                 if(File::exists(public_path('storage/'.$image->image))){
@@ -127,6 +131,14 @@ class PostController extends Controller
               }
               $likes = Like::where('post_id',$post_id)->count();
              return response()->json(['message'=>'success','likes_count'=>$likes]);
+    }
+    public function PostLikes(Request $request,int $post_id){
+      $post = Post::findOrFail($post_id);
+      $usersLiked =  $post->likes()->select('id','user_id')->with(['user'=>function($q){
+         $q->select('id','name','image');
+      }])->get()->pluck('user');
+       
+      return response()->json(['users'=>$usersLiked]);
     }
 
 }

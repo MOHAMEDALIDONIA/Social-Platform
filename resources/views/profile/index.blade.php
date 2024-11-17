@@ -34,9 +34,10 @@
                    
 					<div class="info">
 						<span><i class="fa fa-fw fa-clock-o"></i>Email : {{$user->email}}</span>
-						<span><i class="fa fa-fw fa-list-alt"></i> <a href="#" title="#">name@example.com</a></span>
-						<span><i class="fa fa-fw fa-usd"></i> Best street No. 554/7A<br>949 01 Florida<br>United States</span>
-                        <a href="{{route('profile.edit',$user->id)}}" class="btn btn-primary  d-grid gap-2 col-6 mx-auto">Edit Profile</a>
+
+                        @can('update', $user)
+                         <a href="{{route('profile.edit',$user->id)}}" class="btn btn-primary  d-grid gap-2 col-6 mx-auto">Edit Profile</a>
+                        @endcan
 					</div>
 				
 				</div>
@@ -58,32 +59,35 @@
                   </nav>
                   <div class="tab-content" id="nav-tabContent">
                     <div class="tab-pane fade show active" id="nav-post" role="tabpanel" aria-labelledby="nav-post-tab" tabindex="0">
-                      <!-- Post Form -->
-                      <div class="container" style="margin-top: 30px;">
-                          <div class="form-container">
-                              <h3 class="text-center mb-4">Create a Post</h3>
-                              <form method="POST" action="{{route('store.post')}}" enctype="multipart/form-data">
-                                  @csrf
-                                  <!-- Post Text -->
-                                  <div class="mb-3">
-                                      <label for="postText" class="form-label">Post Text</label>
-                                      <textarea class="form-control" name="content" id="postText" rows="4" placeholder="What's on your mind?"></textarea>
-                                      @error('content')
-                                      <small class="form-text text-danger">{{$message}}</small>
-                                      @enderror
-                                  </div>
-                                  <!-- Image Upload -->
-                                  <div class="mb-3">
-                                      <label for="postImages" class="form-label">Upload Images</label>
-                                      <input type="file" class="form-control" name="image[]" id="postImages" accept="image/*" multiple>
-                                  </div>
-                                  <!-- Submit Button -->
-                                  <div class="d-grid">
-                                      <button type="submit" class="btn btn-primary">Post</button>
-                                  </div>
-                              </form>
-                          </div>
-                      </div>
+                     @can('curdPost', $user)
+                           <!-- Post Form -->
+                            <div class="container" style="margin-top: 30px;">
+                                <div class="form-container">
+                                    <h3 class="text-center mb-4">Create a Post</h3>
+                                    <form method="POST" action="{{route('store.post')}}" enctype="multipart/form-data">
+                                        @csrf
+                                        <!-- Post Text -->
+                                        <div class="mb-3">
+                                            <label for="postText" class="form-label">Post Text</label>
+                                            <textarea class="form-control" name="content" id="postText" rows="4" placeholder="What's on your mind?"></textarea>
+                                            @error('content')
+                                            <small class="form-text text-danger">{{$message}}</small>
+                                            @enderror
+                                        </div>
+                                        <!-- Image Upload -->
+                                        <div class="mb-3">
+                                            <label for="postImages" class="form-label">Upload Images</label>
+                                            <input type="file" class="form-control" name="image[]" id="postImages" accept="image/*" multiple>
+                                        </div>
+                                        <!-- Submit Button -->
+                                        <div class="d-grid">
+                                            <button type="submit" class="btn btn-primary">Post</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                     @endcan   
+                    
                   
                       <!-- Display Posts -->
                       @forelse ($userposts as $post)
@@ -100,16 +104,20 @@
                                       </div>
                                   </div>
                                   <div>
-                                      <div class="dropdown">
-                                          <button class="btn btn-link dropdown-toggle" type="button" id="gedf-drop1" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                              <i class="fa fa-ellipsis-h"></i>
-                                          </button>
-                                          <div class="dropdown-menu dropdown-menu-right" aria-labelledby="gedf-drop1">
-                                              <div class="h6 dropdown-header">Configuration</div>
-                                              <a class="dropdown-item" href="{{route('post.edit',$post->id)}}">Edit</a>
-                                              <a class="dropdown-item" href="{{route('delete.post',$post->id)}}">Delete</a>
-                                          </div>
-                                      </div>
+                                    @can('curdPost', $user)
+                                        <div class="dropdown">
+                                            <button class="btn btn-link dropdown-toggle" type="button" id="gedf-drop1" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                <i class="fa fa-ellipsis-h"></i>
+                                            </button>
+                                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="gedf-drop1">
+                                                <div class="h6 dropdown-header">Configuration</div>
+
+                                                <a class="dropdown-item" href="{{route('post.edit',$post->id)}}">Edit</a>
+                                                <a class="dropdown-item" href="{{route('delete.post',$post->id)}}">Delete</a>
+                                            </div>
+                                        </div>
+                                    @endcan
+                                    
                                   </div>
                               </div>
                           </div>
@@ -311,7 +319,7 @@
 
         // Fetch and display users who liked the post
         $.ajax({
-            url: `/Posts/post-likes/${postId}`,
+            url: `/Posts/post-users-likes/${postId}`,
             method: 'GET',
             success: function(response) {
                 let likesList = $('#likesList' + postId);
@@ -319,7 +327,15 @@
 
                 // Append each user to the likes list
                 response.users.forEach(user => {
-                    likesList.append(`<div>${user.name}</div>`);
+                    likesList.append(`  <div class="user-card bg-light">
+                                            <div class="d-flex align-items-center">
+                                                 <img src="{{asset('storage/${user.image}')}}" alt="User Image" class="profile-image me-3">
+                                                    <div>
+                                                       <h6 class="mb-0">${user.name}</h6>
+                                                    </div>
+                                                    
+                                            </div>
+                                        </div>`);
                 });
             },
             error: function(xhr) {
