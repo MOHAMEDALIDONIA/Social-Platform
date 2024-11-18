@@ -12,12 +12,13 @@ use App\Models\Post;
 use App\Models\PostImage;
 use App\Models\User;
 use App\services\PostServices;
+use App\traits\apiTraits;
 use App\traits\savephoto;
 use Illuminate\Support\Facades\File;
 
 class PostController extends Controller
 {
-    use savephoto;
+    use savephoto,apiTraits;
     protected $Service;
     public function __construct(PostServices $Service)
     {
