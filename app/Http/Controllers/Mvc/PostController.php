@@ -121,7 +121,7 @@ class PostController extends Controller
                 $post = Post::findOrFail($post_id);
                 if (auth()->user()->id != $post->user->id) { 
                     $data =[
-                        'message' =>auth()->user()->name . "Liked your Post"
+                        'message' =>auth()->user()->name . " Liked your Post"
                     ];
                     event(new NotificationLikeEvent($data,$post_id));
                } 

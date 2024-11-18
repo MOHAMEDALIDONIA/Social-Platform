@@ -17,7 +17,7 @@ class HomeController extends Controller
     }
     public function search(Request $request){
         if ($request->search) {
-            $searchUsers = User::search($request)->paginate(20);
+            $searchUsers = User::search($request)->where('id','!=',auth('web')->user()->id)->paginate(20);
                                 return view('users.search',compact('searchUsers'));
         } else {
             return redirect()->back()->with(['message'=>'something error !']);

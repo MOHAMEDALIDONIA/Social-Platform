@@ -105,7 +105,7 @@ class HomeController extends Controller
     public function search(Request $request){
      try {  
         if ($request->search) {
-            $searchUsers = User::search($request)->paginate(20);
+            $searchUsers = User::search($request)->where('id','!=',auth('sanctum')->user()->id)->paginate(20);
             return $this->ReturnData('data',$searchUsers,'Proccess successfully');
         } else {
             return $this->ReturnErrorMessage(" search not found","404");
