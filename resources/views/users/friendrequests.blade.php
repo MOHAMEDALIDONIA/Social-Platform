@@ -83,20 +83,23 @@
             let friendRequestId = $(this).data('friend-request-id');
             let card = $(`[data-card-id="${friendRequestId}"]`);
 
-            $.post('{{ route('reject.friend.request') }}', { friend_request_id: friendRequestId },
-                function(response) {
-                if(response.message == 'success') {
-                        card.remove();
-                        $('#success-message').text(response.message).removeClass('d-none'); 
-                        setTimeout(function() {
-                            $('#success-message').addClass('d-none');
-                        }, 3000);
-                }else{
-                    alert("An error occurred. Please try again.")
-                }
+            $.ajax({
                 
-    
-                })
+              url:'{{ route('reject.friend.request') }}', 
+              method: 'DELETE',
+              data: { friend_request_id: friendRequestId },
+               success: function(response) {
+                    if(response.message == 'Reject Friend Request Successfully') {
+                            card.remove();
+                            $('#success-message').text(response.message).removeClass('d-none'); 
+                            setTimeout(function() {
+                                $('#success-message').addClass('d-none');
+                            }, 3000);
+                    }else{
+                        alert("An error occurred. Please try again.")
+                    }
+                
+              }  });
             
         });
     });

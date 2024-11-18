@@ -17,10 +17,7 @@ class HomeController extends Controller
     }
     public function search(Request $request){
         if ($request->search) {
-            $searchUsers = User::whereNot('id',auth()->user()->id)
-                                ->where('name','LIKE','%'.$request->search.'%')
-                                ->orWhere('email','LIKE','%'.$request->search.'%')
-                                ->latest()->paginate(20);
+            $searchUsers = User::search($request)->paginate(20);
                                 return view('users.search',compact('searchUsers'));
         } else {
             return redirect()->back()->with(['message'=>'something error !']);

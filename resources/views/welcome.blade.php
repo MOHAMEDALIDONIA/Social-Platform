@@ -66,7 +66,7 @@
                             </div>
                         </div>
                         <div>
-                            @can('curdPost', $post->user)
+                            @can('update', $post)
                                 <div class="dropdown">
                                     <button class="btn btn-link dropdown-toggle" type="button" id="gedf-drop1" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         <i class="fa fa-ellipsis-h"></i>

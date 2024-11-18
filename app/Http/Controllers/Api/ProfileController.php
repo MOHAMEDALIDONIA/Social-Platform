@@ -164,7 +164,7 @@ class ProfileController extends Controller
                 }
                 
                 //update user data 
-                $message =  $this->Service->UpdateUserData($user,$request);;
+                $message =  $this->Service->UpdateUserData($user,$request);
                 if(isset($message)){
                     return $message;
                 }

@@ -9,6 +9,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link href="{{asset('css/custom.css')}}" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
     <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
     <script>
@@ -27,27 +28,36 @@
    
     var channel = pusher.subscribe(`user${userId}`);
     channel.bind('send-friend-request', function(data) {
-      if (data ) {
+      if (data.user.message) {
  
-        alert(JSON.stringify(data));
+        toastr.success('New message Created', data.user.message, {
+                timeOut: 0,  
+                extendedTimeOut: 0,  
+                });
       } else {
         console.error('Invalid data structure received:', data);
       }
     });
     var channel = pusher.subscribe(`user-like-post${userId}`);
     channel.bind('liked-post', function(data) {
-      if (data ) {
+      if (data.LikedPost.message ) {
  
-        alert(JSON.stringify(data));
+        toastr.success('New message Created', data.LikedPost.message, {
+                timeOut: 0,  
+                extendedTimeOut: 0,  
+                });
       } else {
         console.error('Invalid data structure received:', data);
       }
     });
     var channel = pusher.subscribe(`user-comment-post${userId}`);
     channel.bind('comment-post', function(data) {
-      if (data ) {
+      if (data.CommentPost.message ) {
  
-        alert(JSON.stringify(data));
+        toastr.success('New message Created', data.CommentPost.message, {
+                timeOut: 0,  
+                extendedTimeOut: 0,  
+                });
       } else {
         console.error('Invalid data structure received:', data);
       }

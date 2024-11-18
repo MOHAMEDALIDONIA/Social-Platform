@@ -59,7 +59,7 @@
                   </nav>
                   <div class="tab-content" id="nav-tabContent">
                     <div class="tab-pane fade show active" id="nav-post" role="tabpanel" aria-labelledby="nav-post-tab" tabindex="0">
-                     @can('curdPost', $user)
+                     @can('update', $user)
                            <!-- Post Form -->
                             <div class="container" style="margin-top: 30px;">
                                 <div class="form-container">
@@ -104,7 +104,7 @@
                                       </div>
                                   </div>
                                   <div>
-                                    @can('curdPost', $user)
+                                    @can('update', $post)
                                         <div class="dropdown">
                                             <button class="btn btn-link dropdown-toggle" type="button" id="gedf-drop1" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                 <i class="fa fa-ellipsis-h"></i>

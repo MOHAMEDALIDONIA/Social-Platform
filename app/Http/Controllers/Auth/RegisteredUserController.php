@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\RegisterRequest;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
 use App\traits\savephoto;
@@ -30,34 +31,29 @@ class RegisteredUserController extends Controller
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function store(Request $request): RedirectResponse
+    public function store(RegisterRequest $request): RedirectResponse
     {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'image'=>['nullable','mimes:jpg,jpeg,png'],
-            'bio' => ['nullable', 'string', 'max:500'],
-        ]);
+        $validation = $request->validated();
+    
 
         if($request->hasFile('image')){
             //using saveimage method in  savephoto trait 
-            $image = $this->SaveImage($request->file('image'),'users\uploads\avaters',600,600)  ;
+            $image = $this->SaveImage($validation['image'],'users\uploads\avaters',600,600)  ;
             // insert new user in database(users table)
             $user = User::create([
-                'name' => $request->name,
-                'email' => $request->email,
-                'password' => Hash::make($request->password),
+                'name' => $validation['name'],
+                'email' => $validation['email'],
+                'password' => Hash::make($validation['password']),
                 'image'=>$image,
-                'bio'=>$request->bio
+                'bio'=>$validation['bio']
 
             ]);
        }else{
             $user = User::create([
-                'name' => $request->name,
-                'email' => $request->email,
-                'password' => Hash::make($request->password),
-                'bio'=>$request->bio
+                'name' => $validation['name'],
+                'email' => $validation['email'],
+                'password' => Hash::make($validation['password']),
+                'bio'=>$validation['bio']
                 
 
             ]);

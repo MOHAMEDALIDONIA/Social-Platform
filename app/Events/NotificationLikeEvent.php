@@ -17,13 +17,13 @@ class NotificationLikeEvent implements ShouldBroadcast
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $postId;
-    public $data;
+    public $LikedPost;
     /**
      * Create a new event instance.
      */
-    public function __construct($data,$postId)
+    public function __construct($LikedPost,$postId)
     {
-        $this->data =$data;
+        $this->LikedPost =$LikedPost;
         $this->postId = $postId;
     }
 

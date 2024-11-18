@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Models\Post;
 use App\Models\User;
 
 class UserPolicy
@@ -17,8 +18,6 @@ class UserPolicy
     {
         return $user->id === $profileUser->id;
     }
-    public function curdPost(User $user, User $profileUser)
-    {
-        return $user->id === $profileUser->id;
-    }
+    
+  
 }

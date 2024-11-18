@@ -105,11 +105,8 @@ class HomeController extends Controller
     public function search(Request $request){
      try {  
         if ($request->search) {
-            $searchUsers = User::whereNot('id',auth()->user()->id)
-                                ->where('name','LIKE','%'.$request->search.'%')
-                                ->orWhere('email','LIKE','%'.$request->search.'%')
-                                ->latest()->paginate(20);
-                                return $this->ReturnData('data',$searchUsers,'Proccess successfully');
+            $searchUsers = User::search($request)->paginate(20);
+            return $this->ReturnData('data',$searchUsers,'Proccess successfully');
         } else {
             return $this->ReturnErrorMessage(" search not found","404");
         }

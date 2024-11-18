@@ -202,7 +202,7 @@ class PostController extends Controller
     public function destroy(string $id)
     {
         try {
-            $post = Post::findOrFail($id);
+            $post = Post::with('images')->findOrFail($id);;
             
             // Authorization check
             if ($post->user->id !== Auth::guard('sanctum')->user()->id) {
@@ -210,11 +210,11 @@ class PostController extends Controller
             }
 
             // Delete post images if they exist
-            if ($post->images()) {
-                foreach ($post->images() as $image) {
+            if ($post->images != null) {
+                foreach ($post->images as $image) {
                     $this->DeleteImageFile($image->image);
                 }
-                $post->images()->delete();
+               
             }
 
             // Delete the post

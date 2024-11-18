@@ -40,9 +40,7 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-    protected $policies = [
-        User::class => UserPolicy::class,
-    ];
+ 
 
     /**
      * The attributes that should be cast.
@@ -81,5 +79,11 @@ class User extends Authenticatable
     }
     public function likes(){
         return $this->hasMany(Like::class,'user_id','id');
+    }
+    public function scopeSearch(Builder $query , $request){
+      return $query->whereNot('id',auth()->user()->id)
+      ->where('name','LIKE','%'.$request->search.'%')
+      ->orWhere('email','LIKE','%'.$request->search.'%')
+      ->latest();
     }
 }

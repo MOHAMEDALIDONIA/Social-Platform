@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Policies\PostPolicy;
+use App\Policies\UserPolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -13,6 +15,7 @@ class Post extends Model
        'user_id',
        'content',
     ];
+  
     public function images(){
         return $this->hasMany(PostImage::class,'post_id','id');
     }

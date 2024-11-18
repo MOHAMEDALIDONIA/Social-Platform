@@ -1,8 +1,11 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Models\Post;
+use App\Models\PostImage;
 use Illuminate\Support\Facades\Route;
 use App\traits\savephoto;
+use Illuminate\Support\Facades\File;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,12 +19,20 @@ use App\traits\savephoto;
 */
 
 
-Route::get('/test',[App\Http\Controllers\TestController::class,'view']);
-Route::get('/test/button',[App\Http\Controllers\TestController::class,'viewButton']);
-Route::post('/test',[App\Http\Controllers\TestController::class,'test'])->name('store.test');
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/test',function ()  {
+   $post =Post::with('images')->where('id',71)->first();
+   return $post->images->image ; 
+   $postimages = PostImage::where('post_id',$post->id)->get();
+   foreach($postimages as $image){
+        echo $image->image;
+   }
+  
+   // if (File::exists(public_path('storage/users/uploads/post/1731962845images (2).jpeg'))) {
+   //    File::delete(public_path('storage/users/uploads/post/1731962845images (2).jpeg'));
+   // }
+   return 'success';
+});
+
 
 Route::middleware('auth')->group(function () {
       //------- Start Home Page ------- //
@@ -43,7 +54,7 @@ Route::middleware('auth')->group(function () {
       Route::get('/friend-requests','GetFriendRequests')->name('friend.requests');
       Route::post('/send-friend-request','SendFriendRequest')->name('send.friend.request');
       Route::post('/accept-friend-request','AcceptFriendRequest')->name('accept.friend.request');
-      Route::post('/reject-friend-request','RejectFriendRequest')->name('reject.friend.request');
+      Route::delete('/reject-friend-request','RejectFriendRequest')->name('reject.friend.request');
    });
    //------- End User actions ------- //
    

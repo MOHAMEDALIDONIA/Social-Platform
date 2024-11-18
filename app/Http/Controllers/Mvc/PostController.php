@@ -38,12 +38,12 @@ class PostController extends Controller
     }
     public function edit(Request $request,int $post_id){
         $post = Post::findOrFail($post_id);
-        $this->authorize('crudPost', $post->user);
+        $this->authorize('update', $post);
         return view('post.edit',compact('post'));
     }
     public function update(Request $request,int $post_id){
          $post = Post::findOrFail($post_id);
-         $this->authorize('crudPost', $post->user);
+         $this->authorize('update', $post);
          //validation request 
         
          $massage= $this->ReturnValidationError($request,['content' => ['required', 'string'], 'image'=>['nullable' ]]);
@@ -63,13 +63,16 @@ class PostController extends Controller
 
     }
     public function destory(int $post_id){
-        $post = Post::findOrFail($post_id);
-        $this->authorize('crudPost', $post->user);
-        if($post->images()){
-            foreach($post->images() as $image){
-                $this->DeleteImageFile($image->image);
+        $post = Post::with('images')->findOrFail($post_id);
+        $this->authorize('delete', $post);
+        if($post->images != null){
+            foreach($post->images as $image){
+                if(File::exists(public_path('storage/'.$image->image))){
+                    File::delete(public_path('storage/'.$image->image));
+                  
+                }
             }
-            $post->images()->delete();
+           
         }
         $post->delete();
         session()->flash('message','Post Deleted Successfully');
@@ -90,11 +93,15 @@ class PostController extends Controller
            $validation = $request->validate([
               'content' => ['required','string']
            ]);
+           $post = Post::findOrFail($post_id);
            // add comment to database
-            $data =[
-                'message' =>auth()->user()->name . "Liked your Post"
-            ];
-          event(new NotificationCommentEvent($data,$post_id));
+           if (auth()->user()->id != $post->user->id) {
+                $data =[
+                    'message' =>auth()->user()->name . " Comment your Post ( " .$post->content." )"
+                ];
+              event(new NotificationCommentEvent($data,$post_id));
+           }
+         
           $comment = Comment::create([
                'user_id' => auth()->user()->id,
                'post_id'=> $post_id,
@@ -111,10 +118,13 @@ class PostController extends Controller
               if ($UserLikedPost->exists()) {
                  $UserLikedPost->delete();
               } else {
-                $data =[
-                    'message' =>auth()->user()->name . "Liked your Post"
-                ];
-                event(new NotificationLikeEvent($data,$post_id));
+                $post = Post::findOrFail($post_id);
+                if (auth()->user()->id != $post->user->id) { 
+                    $data =[
+                        'message' =>auth()->user()->name . "Liked your Post"
+                    ];
+                    event(new NotificationLikeEvent($data,$post_id));
+               } 
                 $UserLikedPost->create([
                    'user_id' => auth()->user()->id,
                    'post_id'=>$post_id

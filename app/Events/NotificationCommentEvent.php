@@ -15,13 +15,13 @@ class NotificationCommentEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
     public $postId;
-    public $data;
+    public $CommentPost;
     /**
      * Create a new event instance.
      */
-    public function __construct($data,$postId)
+    public function __construct($CommentPost,$postId)
     {
-        $this->data =$data;
+        $this->CommentPost =$CommentPost;
         $this->postId = $postId;
     }
 
@@ -32,7 +32,7 @@ class NotificationCommentEvent implements ShouldBroadcast
      */
     public function broadcastOn(): array
     {
-       $post=  Post::find($this->postId);
+       $post=Post::find($this->postId);
        
         return [
             'user-comment-post'. $post->user->id,

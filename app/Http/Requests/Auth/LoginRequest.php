@@ -28,7 +28,7 @@ class LoginRequest extends FormRequest
     {
         return [
             'email' => ['required', 'string', 'email'],
-            'password' => ['required', 'string'],
+            'password' => ['required', 'string'],//,'regex:/[a-zA-Z]/','regex:/[0-9]/','regex:/[@$!%*#?&]/'
         ];
     }
 

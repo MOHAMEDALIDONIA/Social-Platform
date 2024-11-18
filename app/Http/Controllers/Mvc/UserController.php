@@ -31,11 +31,10 @@ class UserController extends Controller
         $senderId = auth()->user()->id;
         $receiverId = $request->friend_id;
    
-        // $data =[
-         
-        //   'meassage'=>auth()->user()->name . 'and' .auth()->user()->email. "send friend request "
-        // ];
-        // event(new SendFriendRequestEvent($data,$receiverId));
+        $data =[
+          'message'=>'('.auth()->user()->name . ') and (' .auth()->user()->email. ") send friend request "
+        ];
+        event(new SendFriendRequestEvent($data,$receiverId));
 
      return  $service->CheckFriendRequestExist($senderId,$receiverId); 
       
