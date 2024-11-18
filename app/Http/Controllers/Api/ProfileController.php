@@ -76,11 +76,8 @@ class ProfileController extends Controller
     public function ChangePassword(Request $request){
         
         //validation of request
-        $rules =[
-            'current_password' => ['required','string'],
-            'password' => ['required', 'string', 'min:8', 'confirmed']
-        ];
-        $message = $this->ReturnValidationError($request,$rules);
+  
+        $message = $this->ReturnValidationError($request,['current_password' => ['required','string'],'password' => ['required', 'string', 'min:8', 'confirmed']]);
         if(isset($message)){
           return $message;
         }

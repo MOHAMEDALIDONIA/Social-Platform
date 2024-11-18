@@ -22,9 +22,9 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
-   //------- Start User Profile ------- //
+   //------- Start Home Page ------- //
     Route::get('/', [App\Http\Controllers\Mvc\HomeController::class,'view'])->name('home.page');
-  //------- End User Profile ------- //
+  //------- End Home Page ------- //
  //------- Start User Profile ------- //
  Route::prefix('/profile')->controller(App\Http\Controllers\Mvc\ProfileController::class)->group(function(){
     Route::get('/{id}','index')->name('profile.view');

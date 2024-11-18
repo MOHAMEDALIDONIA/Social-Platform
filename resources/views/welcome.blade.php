@@ -174,6 +174,9 @@
             @empty
             <p>No posts available.</p>
             @endforelse
+            <div class="pagination justify-content-center">
+                {{$posts->links() }}
+            </div> 
 
 
     

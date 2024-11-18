@@ -9,36 +9,27 @@ use App\Models\Like;
 use App\Models\Post;
 use App\Models\PostImage;
 use App\Models\User;
+use App\services\PostServices;
 use App\traits\savephoto;
 use Illuminate\Support\Facades\File;
 
 class PostController extends Controller
 {
     use savephoto;
+    protected $Service;
+    public function __construct(PostServices $Service)
+    {
+        $this->Service = $Service;
+    }
     public function store(Request $request){
     
-          //validation request 
-          $validation = $request->validate([
-            'content' => ['required', 'string'],
-            'image'=>['nullable' ]
-          ]);
-          //store data to post
-          $post =Post::create([
-                'user_id'=>auth()->user()->id,
-                'content'=>$validation['content']
-          ]);
-          //store image if it exists 
-          if($request->hasFile('image')){
-            foreach($request->file('image') as $imageFile){
-                //save image to folder 
-               $image = $this->SaveImage($imageFile,'users/uploads/post');
-
-                PostImage::create([
-                    'post_id' => $post->id,
-                    'image' => $image
-                ]);
-            }
-          }
+            //validation request 
+             $massage= $this->ReturnValidationError($request,['content' => ['required', 'string'],'image'=>['nullable']]);
+             if(isset($massage)){
+                return $massage;
+             }
+                
+            $this->Service->StorePost($request);
           session('message','Post Added Successfully');
           return redirect()->back();
     }
@@ -50,27 +41,20 @@ class PostController extends Controller
     public function update(Request $request,int $post_id){
          $post = Post::findOrFail($post_id);
          $this->authorize('crudPost', $post->user);
-         //validation  request
-         $validation = $request->validate([
-            'content' => ['required', 'string'],
-            'image'=>['nullable' ]
-          ]);
-          //update content post
-          $post->update([
-            'content' => $validation['content']
-          ]);
-          // upload images if they exist
-          if($request->hasFile('image')){
-            foreach($request->file('image') as $imageFile){
-                //save image to folder 
-               $image = $this->SaveImage($imageFile,'users/uploads/post');
-
-                PostImage::create([
-                    'post_id' => $post->id,
-                    'image' => $image
-                ]);
-            }
-          }
+         //validation request 
+        
+         $massage= $this->ReturnValidationError($request,['content' => ['required', 'string'], 'image'=>['nullable' ]]);
+         if(isset($massage)){
+             return $massage;
+         }
+         //update content post
+         $post->update([
+         'content' => $request->content
+         ]);
+         // upload images if they exist
+         if($request->hasFile('image')){
+             $this->Service->UploadPostImages($request->file('image'),$post);
+         }
           session()->flash('message','Post Updated Successfully');
           return redirect()->back();
 
@@ -80,12 +64,9 @@ class PostController extends Controller
         $this->authorize('crudPost', $post->user);
         if($post->images()){
             foreach($post->images() as $image){
-                if(File::exists(public_path('storage/'.$image->image))){
-                    File::delete(public_path('storage/'.$image->image));
-        
-                }
-
+                $this->DeleteImageFile($image->image);
             }
+            $post->images()->delete();
         }
         $post->delete();
         session()->flash('message','Post Deleted Successfully');
@@ -95,11 +76,10 @@ class PostController extends Controller
     
     public function destoryPostImage($image_id){
         $postImage= PostImage::findOrfail($image_id);
-        if(File::exists(public_path('storage/'.$postImage->image))){
-            File::delete(public_path('storage/'.$postImage->image));
-
-        }
-        $postImage->delete();
+        if($this->DeleteImageFile($postImage->image)){
+           
+          $postImage->delete();
+       }
         return redirect()->back()->with(['message'=>'Post Image Deleted Successfully']);
     }
     public function CreateComment(Request $request,int $post_id){

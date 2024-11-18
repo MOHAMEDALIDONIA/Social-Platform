@@ -38,6 +38,9 @@
         
         </div>
      @endforelse
+     <div class="pagination justify-content-center">
+        {{$FriendRequests->links() }}
+    </div> 
      
       
     </div>

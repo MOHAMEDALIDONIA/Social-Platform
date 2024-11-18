@@ -37,6 +37,13 @@ Trait savephoto {
             return $image;
         }
     }
+    public function DeleteImageFile($Image){
+        if(File::exists(public_path('storage/'.$Image))){
+            File::delete(public_path('storage/'.$Image));
+          return true;
+        }
+        return false;
+    }
 
 }
 ?>

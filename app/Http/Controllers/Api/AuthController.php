@@ -22,9 +22,9 @@ class AuthController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'image'=>['nullable','mimes:jpg,jpeg,png'],
         ];
-        $validation = Validator::make($request->all(),$rules);
-        if ($validation->fails()) {
-          return $this->ReturnErrorMessage($validation->messages()->first(),'900');
+        $massage= $this->ReturnValidationError($request,$rules);
+        if(isset($massage)){
+          return $massage;
         }
         if($request->hasFile('image')){
             //using saveimage method in  savephoto trait 
@@ -45,7 +45,7 @@ class AuthController extends Controller
                         
 
                     ]);
-            }
+        }
             $token = $user->createToken('API Token')->plainTextToken;
             $value = ['user'=>$user,'token'=>$token];
             return $this->ReturnData('data',$value,"user register successfully");
@@ -56,9 +56,9 @@ class AuthController extends Controller
             'email' => 'required|email',
             'password' => 'required|string|min:8',
         ];
-        $validation = Validator::make($request->all(),$rules);
-        if ($validation->fails()) {
-          return $this->ReturnErrorMessage($validation->messages()->first(),'900');
+        $massage= $this->ReturnValidationError($request,$rules);
+        if(isset($massage)){
+          return $massage;
         }
         $user =User::where('email', $request->email)->first();
 

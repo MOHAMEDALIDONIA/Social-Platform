@@ -10,8 +10,8 @@ use Illuminate\Http\Request;
 class HomeController extends Controller
 {
     public function view(){
-         $today = Carbon::now()->format('Y-m-d');
-         $posts = Post::latest()->get();
+       
+         $posts = Post::with(['user','comments','likes','images'])->latest()->paginate(10);
         return view('welcome',compact('posts'));
     }
 }
