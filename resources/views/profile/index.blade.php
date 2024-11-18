@@ -26,8 +26,8 @@
 				<div class="box">
 					<div class="name"><strong>{{$user->name}}</strong> 
                         <br>
-                        @if ($user->userProfile)
-                           <p>{{$user->userProfile->bio}}</p> 
+                        @if ($user->bio)
+                           <p>{{$user->bio}}</p> 
                         @endif
                      
                     </div>

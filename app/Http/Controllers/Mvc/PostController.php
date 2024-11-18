@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Mvc;
 
+use App\Events\NotificationCommentEvent;
+use App\Events\NotificationLikeEvent;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Comment;
@@ -88,6 +90,10 @@ class PostController extends Controller
               'content' => ['required','string']
            ]);
            // add comment to database
+            $data =[
+                'message' =>auth()->user()->name . "Liked your Post"
+            ];
+          event(new NotificationCommentEvent($data,$post_id));
           $comment = Comment::create([
                'user_id' => auth()->user()->id,
                'post_id'=> $post_id,
@@ -104,6 +110,10 @@ class PostController extends Controller
               if ($UserLikedPost->exists()) {
                  $UserLikedPost->delete();
               } else {
+                $data =[
+                    'message' =>auth()->user()->name . "Liked your Post"
+                ];
+                event(new NotificationLikeEvent($data,$post_id));
                 $UserLikedPost->create([
                    'user_id' => auth()->user()->id,
                    'post_id'=>$post_id

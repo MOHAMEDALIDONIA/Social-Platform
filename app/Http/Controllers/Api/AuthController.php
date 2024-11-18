@@ -56,6 +56,7 @@ class AuthController extends Controller
                 'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
                 'password' => ['required', 'confirmed', Rules\Password::defaults()],
                 'image'=>['nullable','mimes:jpg,jpeg,png'],
+                'bio' => ['nullable', 'string', 'max:500'],
             ];
             $massage= $this->ReturnValidationError($request,$rules);
             if(isset($massage)){
@@ -70,6 +71,7 @@ class AuthController extends Controller
                     'email' => $request->email,
                     'password' => Hash::make($request->password),
                     'image'=>$image,
+                    'bio'=>$request->bio
     
                         ]);
                 }else{
@@ -77,6 +79,7 @@ class AuthController extends Controller
                             'name' => $request->name,
                             'email' => $request->email,
                             'password' => Hash::make($request->password),
+                            'bio'=>$request->bio
                             
     
                         ]);
@@ -120,11 +123,8 @@ class AuthController extends Controller
      */
     public function login(Request $request){
         try {
-            $rules = [
-                'email' => 'required|email',
-                'password' => 'required|string|min:8',
-            ];
-            $massage= $this->ReturnValidationError($request,$rules);
+            
+            $massage= $this->ReturnValidationError($request,['email' => 'required|email','password' => 'required|string|min:8',]);
             if(isset($massage)){
               return $massage;
             }

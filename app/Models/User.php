@@ -26,7 +26,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'image'
+        'image',
+        'bio'
     ];
 
     /**
@@ -51,9 +52,7 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
-    public function userProfile(){
-        return $this->hasOne(Userprofile::class,'user_id','id');
-    }
+  
     public function friends()
     {
         return $this->hasMany(FriendConnection::class, 'user_id','id');

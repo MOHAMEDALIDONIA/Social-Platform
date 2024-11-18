@@ -37,6 +37,7 @@ class RegisteredUserController extends Controller
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'image'=>['nullable','mimes:jpg,jpeg,png'],
+            'bio' => ['nullable', 'string', 'max:500'],
         ]);
 
         if($request->hasFile('image')){
@@ -48,6 +49,7 @@ class RegisteredUserController extends Controller
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
                 'image'=>$image,
+                'bio'=>$request->bio
 
             ]);
        }else{
@@ -55,6 +57,7 @@ class RegisteredUserController extends Controller
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
+                'bio'=>$request->bio
                 
 
             ]);

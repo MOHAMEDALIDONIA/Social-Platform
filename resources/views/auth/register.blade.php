@@ -22,6 +22,11 @@
         <x-text-input id="image" class="block mt-1 w-full" type="file" name="image" />
         <x-input-error :messages="$errors->get('image')" class="mt-2" />
     </div>
+    <div class="mt-4">
+        <x-input-label for="bio" :value="__('About')" />
+        <x-text-input id="bio" class="block mt-1 w-full" type="text" name="bio" :value="old('email')" required autocomplete="username" />
+        <x-input-error :messages="$errors->get('bio')" class="mt-2" />
+    </div>
 
         <!-- Password -->
         <div class="mt-4">

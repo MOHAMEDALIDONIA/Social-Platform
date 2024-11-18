@@ -67,7 +67,7 @@
                                   <div class="col mb-3">
                                     <div class="form-group">
                                       <label>About</label>
-                                      <textarea class="form-control" name="bio" rows="5" placeholder="My Bio">{{$user->userProfile->bio ?? ''}}</textarea>
+                                      <textarea class="form-control" name="bio" rows="5" placeholder="My Bio">{{$user->bio ?? ''}}</textarea>
                                       @error('bio')
                                       <small class="form-text text-danger">{{$message}}</small>
                                       @enderror

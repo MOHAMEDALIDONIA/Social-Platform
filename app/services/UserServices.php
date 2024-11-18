@@ -29,19 +29,15 @@ class UserServices{
               $user->update([
                  'name'=>$request->name,
                  'email' =>$request->email,
-                 'image' => $request->image 
-                 
+                 'image' => $request->image ,
+                 'bio'=>$request->bio
               ]);
-              //add or update user bio
-              $user->userProfile()->updateOrCreate(
-                ['user_id' => $user->id],
-                ['bio' => $request->bio]
-            );
+        
        
     }
     public function CheckFriendRequestExist($senderId,$receiverId){
         if (FriendRequest::where('sender_id',$senderId)->where('receiver_id',$receiverId)->exists()) {
-           return $this->ReturnErrorMessage("Friend request already exists.","410");
+            return $this->ReturnErrorMessage("Friend request already exists.","410");
            
          } else {
             FriendRequest::create([

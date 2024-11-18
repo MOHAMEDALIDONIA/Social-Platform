@@ -16,6 +16,8 @@
         "vite": "^4.0.0"
     },
     "dependencies": {
-        "infinite-scroll": "^4.0.1"
+        "infinite-scroll": "^4.0.1",
+        "laravel-echo": "^1.17.0",
+        "pusher-js": "^8.4.0-rc2"
     }
 }

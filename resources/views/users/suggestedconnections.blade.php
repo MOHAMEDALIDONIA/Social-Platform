@@ -41,8 +41,8 @@
 
             $.post('{{ route('send.friend.request') }}', { friend_id: friendId },
                 function(response) {
-                    if (response.message == 'success') {
-                        button.text("panding")
+                    if (response.message == 'Friend request Send Successfully') {
+                         button.text("panding")
                           .removeClass("btn-primary")
                           .addClass("btn-secondary text-dark")
                           .prop("disabled", true);

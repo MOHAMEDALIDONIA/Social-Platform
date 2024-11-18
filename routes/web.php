@@ -16,7 +16,9 @@ use App\traits\savephoto;
 */
 
 
-Route::get('/test',[App\Http\Controllers\TestController::class,'test']);
+Route::get('/test',[App\Http\Controllers\TestController::class,'view']);
+Route::get('/test/button',[App\Http\Controllers\TestController::class,'viewButton']);
+Route::post('/test',[App\Http\Controllers\TestController::class,'test'])->name('store.test');
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');

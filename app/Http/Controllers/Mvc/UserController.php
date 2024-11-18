@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\mvc;
 
+use App\Events\SendFriendRequest;
+use App\Events\SendFriendRequestEvent;
 use App\Http\Controllers\Controller;
 use App\Models\FriendConnection;
 use App\Models\FriendRequest;
@@ -21,15 +23,21 @@ class UserController extends Controller
     }
     public function GetFriendRequests(){
         $userId = auth()->user()->id;
-        $FriendRequests = FriendRequest::ShowMyFriendRequest($userId)->get();
+        $FriendRequests = FriendRequest::ShowMyFriendRequest($userId)->paginate(10);
         return view('users.friendrequests',compact('FriendRequests'));
     }
     public function SendFriendRequest(Request $request,UserServices $service){
         // add friend request to database
         $senderId = auth()->user()->id;
         $receiverId = $request->friend_id;
+   
+        // $data =[
+         
+        //   'meassage'=>auth()->user()->name . 'and' .auth()->user()->email. "send friend request "
+        // ];
+        // event(new SendFriendRequestEvent($data,$receiverId));
 
-      return $service->CheckFriendRequestExist($senderId,$receiverId);
+     return  $service->CheckFriendRequestExist($senderId,$receiverId); 
       
      
         

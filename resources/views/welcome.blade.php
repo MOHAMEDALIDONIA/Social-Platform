@@ -2,6 +2,7 @@
 @section('title','Home Page')
 @section('content')
 <div class="container gedf-wrapper">
+    <div id="notification-container"></div>
     <div class="row">
         <div class="col-md-3">
             <div class="card">
@@ -307,6 +308,29 @@
         });
     }
 </script> 
+{{-- <script>
+   
+    <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
+  
+     Pusher.logToConsole = true;
+     var pusher = new Pusher('6906a6a7bc9340a75919', {
+      cluster: 'ap2'
+    });
+    var channel = pusher.subscribe('my-channel');
+    channel.bind('SendFriendRequest', function(data) {
+      if (data && data.post && data.post.author && data.post.title) {
+        toastr.success('New Post Created', 'Author: ' + data.post.author + '<br>Title: ' + data.post.title, {
+          timeOut: 0,  
+          extendedTimeOut: 0,  
+        });
+      } else {
+        console.error('Invalid data structure received:', data);
+      }
+    });
+
+
+
+</script> --}}
 <!-- JavaScript to Preview Images -->
 <script>
   const postImages = document.getElementById('postImages');
