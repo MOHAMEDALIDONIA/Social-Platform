@@ -1,0 +1,1503 @@
+openapi: 3.0.3
+info:
+  title: Laravel
+  description: ''
+  version: 1.0.0
+servers:
+  -
+    url: 'http://localhost'
+paths:
+  /api/v1/logout:
+    delete:
+      summary: 'User logout.'
+      operationId: userLogout
+      description: 'Logs out the authenticated user by revoking the current access token.'
+      parameters: []
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: true
+                  message: 'Logged out'
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: 'Logged out'
+        500:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: false
+                  message: 'An error occurred Internal Server Error'
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: 'An error occurred Internal Server Error'
+      tags:
+        - Authentication
+  /api/v1/register:
+    post:
+      summary: 'Register a new user.'
+      operationId: registerANewUser
+      description: 'This endpoint registers a new user and returns a token for authentication.'
+      parameters: []
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: true
+                  message: 'user register successfully'
+                  data:
+                    user:
+                      id: 1
+                      name: 'John Doe'
+                      email: johndoe@example.com
+                      image: path/to/image.jpg
+                      created_at: '2024-11-17T10:20:30.000Z'
+                    token: 4|AiwkA7Tmt9TtWAs...NkAzjl
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: 'user register successfully'
+                  data:
+                    type: object
+                    properties:
+                      user:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                            example: 1
+                          name:
+                            type: string
+                            example: 'John Doe'
+                          email:
+                            type: string
+                            example: johndoe@example.com
+                          image:
+                            type: string
+                            example: path/to/image.jpg
+                          created_at:
+                            type: string
+                            example: '2024-11-17T10:20:30.000Z'
+                      token:
+                        type: string
+                        example: 4|AiwkA7Tmt9TtWAs...NkAzjl
+        500:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: false
+                  message: 'An error occurred Internal Server Error'
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: 'An error occurred Internal Server Error'
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: "The user's full name."
+                  example: '"John Doe"'
+                  nullable: false
+                email:
+                  type: string
+                  description: "The user's email address. Must be unique."
+                  example: '"johndoe@example.com"'
+                  nullable: false
+                password:
+                  type: string
+                  description: "The user's password. Must be confirmed."
+                  example: '"password123"'
+                  nullable: false
+                password_confirmation:
+                  type: string
+                  description: 'Password confirmation.'
+                  example: '"password123"'
+                  nullable: false
+                image:
+                  type: string
+                  format: binary
+                  description: 'optional A profile image. Only jpg, jpeg, and png formats are allowed.'
+                  nullable: false
+              required:
+                - name
+                - email
+                - password
+                - password_confirmation
+      security: []
+  /api/v1/login:
+    post:
+      summary: 'User login.'
+      operationId: userLogin
+      description: 'Authenticates a user and returns a token if credentials are correct.'
+      parameters: []
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: true
+                  message: 'user login successfully'
+                  data:
+                    user:
+                      id: 1
+                      name: 'John Doe'
+                      email: johndoe@example.com
+                    token: 4|AiwkA7Tmt9TtWAs...NkAzjl
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: 'user login successfully'
+                  data:
+                    type: object
+                    properties:
+                      user:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                            example: 1
+                          name:
+                            type: string
+                            example: 'John Doe'
+                          email:
+                            type: string
+                            example: johndoe@example.com
+                      token:
+                        type: string
+                        example: 4|AiwkA7Tmt9TtWAs...NkAzjl
+        500:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: false
+                  message: 'An error occurred Internal Server Error'
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: 'An error occurred Internal Server Error'
+        900:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: false
+                  message: 'The provided credentials are incorrect'
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: 'The provided credentials are incorrect'
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: "The user's email address."
+                  example: '"johndoe@example.com"'
+                  nullable: false
+                password:
+                  type: string
+                  description: "The user's password."
+                  example: '"password123"'
+                  nullable: false
+              required:
+                - email
+                - password
+      security: []
+  /api/v1:
+    get:
+      summary: 'Display a paginated list of posts for the home page.'
+      operationId: displayAPaginatedListOfPostsForTheHomePage
+      description: ''
+      parameters: []
+      responses:
+        200:
+          description: ''
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "{\n  \"status\": true,\n  \"message\": \"Show Home Page\",\n  \"data\": [\n    {\n      \"id\": 1,\n      \"user\": {\n        \"id\": 1,\n        \"name\": \"User Name\",\n        // Additional user fields\n      },\n      \"comments\": [\n        {\n          \"id\": 1,\n          \"content\": \"Comment Content\",\n          // Additional comment fields\n        }\n      ],\n      \"likes\": [\n        {\n          \"id\": 1,\n          \"user_id\": 1,\n          // Additional like fields\n        }\n      ],\n      \"images\": [\n        {\n          \"id\": 1,\n          \"url\": \"image_url.jpg\",\n          // Additional image fields\n        }\n      ]\n      // Additional post fields\n    }\n  ]\n}"
+        500:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: false
+                  message: 'An error occurred Internal Server Error'
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: 'An error occurred Internal Server Error'
+      tags:
+        - 'Home Page'
+      security: []
+  /api/v1/search:
+    get:
+      summary: 'Search for users based on a query, excluding the authenticated user.'
+      operationId: searchForUsersBasedOnAQueryExcludingTheAuthenticatedUser
+      description: ''
+      parameters:
+        -
+          in: query
+          name: search
+          description: 'The search term for matching users by name or email.'
+          example: '"john"'
+          required: true
+          schema:
+            type: string
+            description: 'The search term for matching users by name or email.'
+            example: '"john"'
+            nullable: false
+      responses:
+        200:
+          description: ''
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "{\n  \"status\": true,\n  \"message\": \"Process successfully\",\n  \"data\": [\n    {\n      \"id\": 2,\n      \"name\": \"John Doe\",\n      \"email\": \"john@example.com\",\n      // Additional user fields\n    }\n  ]\n}"
+        404:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: false
+                  message: 'search not found'
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: 'search not found'
+        500:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: false
+                  message: 'An error occurred Internal Server Error'
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: 'An error occurred Internal Server Error'
+      tags:
+        - 'Home Page'
+      security: []
+  '/api/v1/post/edit/{id}':
+    get:
+      summary: 'Show the details of the post to be edited.'
+      operationId: showTheDetailsOfThePostToBeEdited
+      description: ''
+      parameters: []
+      responses:
+        200:
+          description: ''
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "{\n  \"status\": true,\n  \"message\": \"Success show user\",\n  \"data\": {\n    \"post\": {\n      \"id\": 1,\n      \"content\": \"This is a post\",\n      \"user_id\": 1,\n      \"created_at\": \"2024-11-18T12:00:00Z\",\n      // Additional post fields\n    }\n  }\n}"
+        403:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: false
+                  message: Unauthorized
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: Unauthorized
+        500:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: false
+                  message: 'An error occurred Internal Server Error'
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: 'An error occurred Internal Server Error'
+      tags:
+        - 'Post User'
+      security: []
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'The ID of the edit.'
+        example: exercitationem
+        required: true
+        schema:
+          type: string
+  '/api/v1/post-image/delete/{id}':
+    delete:
+      summary: 'Delete a post image.'
+      operationId: deleteAPostImage
+      description: ''
+      parameters: []
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: true
+                  message: 'Post Image Deleted Successfully'
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: 'Post Image Deleted Successfully'
+        500:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: false
+                  message: 'An error occurred Internal Server Error'
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: 'An error occurred Internal Server Error'
+      tags:
+        - 'Post User'
+      security: []
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'The ID of the delete.'
+        example: impedit
+        required: true
+        schema:
+          type: string
+  '/api/v1/post-comment/{id}':
+    post:
+      summary: 'Create a comment for a post.'
+      operationId: createACommentForAPost
+      description: ''
+      parameters: []
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: true
+                  message: 'success comment'
+                  data: 'John Doe'
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: 'success comment'
+                  data:
+                    type: string
+                    example: 'John Doe'
+        500:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: false
+                  message: 'An error occurred Internal Server Error'
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: 'An error occurred Internal Server Error'
+      tags:
+        - 'Post User'
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: string
+                  description: 'The content of the comment.'
+                  example: '"Great post!"'
+                  nullable: false
+                image:
+                  type: string
+                  format: binary
+                  description: 'optional The image attached to the comment.'
+                  nullable: false
+              required:
+                - content
+      security: []
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'The ID of the post comment.'
+        example: beatae
+        required: true
+        schema:
+          type: string
+  '/api/v1/post-like/{id}':
+    post:
+      summary: 'Like or unlike a post.'
+      operationId: likeOrUnlikeAPost
+      description: ''
+      parameters: []
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: true
+                  message: 'Liked Post'
+                  data:
+                    likes_count: 5
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: 'Liked Post'
+                  data:
+                    type: object
+                    properties:
+                      likes_count:
+                        type: integer
+                        example: 5
+        500:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: false
+                  message: 'An error occurred Internal Server Error'
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: 'An error occurred Internal Server Error'
+      tags:
+        - 'Post User'
+      security: []
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'The ID of the post like.'
+        example: et
+        required: true
+        schema:
+          type: string
+  '/api/v1/post-users-likes/{id}':
+    get:
+      summary: 'Get the users who liked a post.'
+      operationId: getTheUsersWhoLikedAPost
+      description: ''
+      parameters: []
+      responses:
+        200:
+          description: ''
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "{\n  \"status\": true,\n  \"message\": \"user like post\",\n  \"data\": [\n    {\n      \"id\": 1,\n      \"name\": \"John Doe\",\n      \"image\": \"/images/johndoe.jpg\"\n    },\n    // Other users\n  ]\n}"
+        500:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: false
+                  message: 'An error occurred Internal Server Error'
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: 'An error occurred Internal Server Error'
+      tags:
+        - 'Post User'
+      security: []
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'The ID of the post users like.'
+        example: maiores
+        required: true
+        schema:
+          type: string
+  /api/v1/posts:
+    post:
+      summary: 'Store a newly created post in storage.'
+      operationId: storeANewlyCreatedPostInStorage
+      description: ''
+      parameters: []
+      responses:
+        201:
+          description: ''
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "{\n  \"status\": true,\n  \"message\": \"Added Post Successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"content\": \"This is a new post.\",\n    \"user_id\": 1,\n    \"created_at\": \"2024-11-18T12:00:00Z\",\n    // Other post fields\n  }\n}"
+        400:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: false
+                  message: 'Validation error.'
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: 'Validation error.'
+        500:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: false
+                  message: 'An error occurred Internal Server Error'
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: 'An error occurred Internal Server Error'
+      tags:
+        - 'Post User'
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: string
+                  description: 'The content of the post.'
+                  example: '"This is a new post."'
+                  nullable: false
+                image:
+                  type: string
+                  format: binary
+                  description: 'optional The image attached to the post.'
+                  nullable: false
+              required:
+                - content
+      security: []
+  '/api/v1/posts/{id}':
+    put:
+      summary: 'Update the specified post in storage.'
+      operationId: updateTheSpecifiedPostInStorage
+      description: ''
+      parameters: []
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: true
+                  message: 'Updated Post Successfully'
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: 'Updated Post Successfully'
+        403:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: false
+                  message: Unauthorized
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: Unauthorized
+        500:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: false
+                  message: 'An error occurred Internal Server Error'
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: 'An error occurred Internal Server Error'
+      tags:
+        - 'Post User'
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: string
+                  description: 'The updated content of the post.'
+                  example: '"Updated post content."'
+                  nullable: false
+                image:
+                  type: string
+                  format: binary
+                  description: 'optional The updated image attached to the post.'
+                  nullable: false
+              required:
+                - content
+      security: []
+    delete:
+      summary: 'Remove the specified post from storage.'
+      operationId: removeTheSpecifiedPostFromStorage
+      description: ''
+      parameters: []
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: true
+                  message: 'Deleted Post Successfully'
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: 'Deleted Post Successfully'
+        403:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: false
+                  message: Unauthorized
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: Unauthorized
+        500:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: false
+                  message: 'An error occurred Internal Server Error'
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: 'An error occurred Internal Server Error'
+      tags:
+        - 'Post User'
+      security: []
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'The ID of the post.'
+        example: harum
+        required: true
+        schema:
+          type: string
+  /api/v1/Users/SuggestedConnections:
+    get:
+      summary: 'Retrieve suggested connections for the authenticated user.'
+      operationId: retrieveSuggestedConnectionsForTheAuthenticatedUser
+      description: ''
+      parameters: []
+      responses:
+        200:
+          description: ''
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "{\n  \"status\": true,\n  \"message\": \"Suggested connections fetched successfully\",\n  \"data\": [\n    {\n      \"id\": 2,\n      \"name\": \"John Doe\",\n      \"email\": \"john@example.com\",\n      // Additional user fields\n    }\n  ]\n}"
+        500:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: false
+                  message: 'An error occurred Internal Server Error'
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: 'An error occurred Internal Server Error'
+      tags:
+        - 'User '
+      security: []
+  /api/v1/Users/friend-requests:
+    get:
+      summary: 'Retrieve all friend requests for the authenticated user.'
+      operationId: retrieveAllFriendRequestsForTheAuthenticatedUser
+      description: ''
+      parameters: []
+      responses:
+        200:
+          description: ''
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "{\n  \"status\": true,\n  \"message\": \"Friend Requests fetched successfully\",\n  \"data\": [\n    {\n      \"id\": 1,\n      \"sender_id\": 3,\n      \"receiver_id\": 2,\n      \"status\": \"pending\",\n      // Additional friend request fields\n    }\n  ]\n}"
+        500:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: false
+                  message: 'An error occurred Internal Server Error'
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: 'An error occurred Internal Server Error'
+      tags:
+        - 'User '
+      security: []
+  /api/v1/Users/send-friend-request:
+    post:
+      summary: 'Send a friend request to another user.'
+      operationId: sendAFriendRequestToAnotherUser
+      description: ''
+      parameters: []
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: true
+                  message: 'Friend request sent successfully'
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: 'Friend request sent successfully'
+        400:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: false
+                  message: 'Friend request already exists'
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: 'Friend request already exists'
+        500:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: false
+                  message: 'An error occurred Internal Server Error'
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: 'An error occurred Internal Server Error'
+      tags:
+        - 'User '
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                friend_id:
+                  type: integer
+                  description: 'The ID of the user to send a friend request to.'
+                  example: 5
+                  nullable: false
+              required:
+                - friend_id
+      security: []
+  /api/v1/Users/accept-friend-request:
+    post:
+      summary: 'Accept a pending friend request.'
+      operationId: acceptAPendingFriendRequest
+      description: ''
+      parameters: []
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: true
+                  message: 'Friend request accepted successfully'
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: 'Friend request accepted successfully'
+        400:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: false
+                  message: 'Friend request not found'
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: 'Friend request not found'
+        500:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: false
+                  message: 'An error occurred Internal Server Error'
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: 'An error occurred Internal Server Error'
+      tags:
+        - 'User '
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                friend_request_id:
+                  type: integer
+                  description: 'The ID of the friend request to accept.'
+                  example: 1
+                  nullable: false
+              required:
+                - friend_request_id
+      security: []
+  /api/v1/Users/reject-friend-request:
+    delete:
+      summary: 'Reject a pending friend request.'
+      operationId: rejectAPendingFriendRequest
+      description: ''
+      parameters: []
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: true
+                  message: 'Friend request rejected successfully'
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: 'Friend request rejected successfully'
+        400:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: false
+                  message: 'Friend request not found'
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: 'Friend request not found'
+        500:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: false
+                  message: 'An error occurred Internal Server Error'
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: 'An error occurred Internal Server Error'
+      tags:
+        - 'User '
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                friend_request_id:
+                  type: integer
+                  description: 'The ID of the friend request to reject.'
+                  example: 1
+                  nullable: false
+              required:
+                - friend_request_id
+      security: []
+  '/api/v1/profile/edit/{id}':
+    get:
+      summary: 'Show specific user profile.'
+      operationId: showSpecificUserProfile
+      description: 'Retrieves the profile information of a user by ID.'
+      parameters: []
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: true
+                  message: 'Success show user'
+                  data:
+                    user:
+                      id: 1
+                      name: 'John Doe'
+                      email: john@example.com
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: 'Success show user'
+                  data:
+                    type: object
+                    properties:
+                      user:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                            example: 1
+                          name:
+                            type: string
+                            example: 'John Doe'
+                          email:
+                            type: string
+                            example: john@example.com
+        403:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: false
+                  message: unauthorized
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: unauthorized
+        500:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: false
+                  message: 'An error occurred Internal Server Error'
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: 'An error occurred Internal Server Error'
+      tags:
+        - 'User Profile'
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'The ID of the user.'
+        example: 1
+        required: true
+        schema:
+          type: integer
+  /api/v1/changepassword:
+    post:
+      summary: 'Change user password.'
+      operationId: changeUserPassword
+      description: "Changes the authenticated user's password."
+      parameters: []
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: true
+                  message: 'Password Updated Successfully'
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: 'Password Updated Successfully'
+        500:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: false
+                  message: 'An error occurred Internal Server Error'
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: 'An error occurred Internal Server Error'
+        800:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: false
+                  message: 'Current Password does not match with Old Password'
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: 'Current Password does not match with Old Password'
+      tags:
+        - 'User Profile'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                current_password:
+                  type: string
+                  description: "The user's current password."
+                  example: '"oldpassword"'
+                  nullable: false
+                password:
+                  type: string
+                  description: 'The new password.'
+                  example: '"newpassword123"'
+                  nullable: false
+                password_confirmation:
+                  type: string
+                  description: 'The confirmation of the new password.'
+                  example: '"newpassword123"'
+                  nullable: false
+              required:
+                - current_password
+                - password
+                - password_confirmation
+  /api/v1/profiles:
+    get:
+      summary: 'Get profile information.'
+      operationId: getProfileInformation
+      description: "Retrieves the authenticated user's profile information, including their friends list and posts."
+      parameters: []
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: true
+                  message: Success
+                  data:
+                    user:
+                      id: 1
+                      name: 'John Doe'
+                      email: john@example.com
+                      created_at: '2024-11-17T10:20:30.000Z'
+                    userfriends:
+                      -
+                        id: 2
+                        name: 'Jane Doe'
+                    userposts:
+                      -
+                        id: 1
+                        user_id: 1
+                        content: 'This is a sample post'
+                        created_at: '2024-11-17T10:20:30.000Z'
+                        comments: []
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Success
+                  data:
+                    type: object
+                    properties:
+                      user:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                            example: 1
+                          name:
+                            type: string
+                            example: 'John Doe'
+                          email:
+                            type: string
+                            example: john@example.com
+                          created_at:
+                            type: string
+                            example: '2024-11-17T10:20:30.000Z'
+                      userfriends:
+                        type: array
+                        example:
+                          -
+                            id: 2
+                            name: 'Jane Doe'
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              example: 2
+                            name:
+                              type: string
+                              example: 'Jane Doe'
+                      userposts:
+                        type: array
+                        example:
+                          -
+                            id: 1
+                            user_id: 1
+                            content: 'This is a sample post'
+                            created_at: '2024-11-17T10:20:30.000Z'
+                            comments: []
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              example: 1
+                            user_id:
+                              type: integer
+                              example: 1
+                            content:
+                              type: string
+                              example: 'This is a sample post'
+                            created_at:
+                              type: string
+                              example: '2024-11-17T10:20:30.000Z'
+                            comments:
+                              type: array
+                              example: []
+      tags:
+        - 'User Profile'
+  '/api/v1/profiles/{id}':
+    put:
+      summary: 'Update user profile.'
+      operationId: updateUserProfile
+      description: 'Updates the profile information of the authenticated user.'
+      parameters: []
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: true
+                  message: 'Update Data Successfully'
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: 'Update Data Successfully'
+        403:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: false
+                  message: unauthorized
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: unauthorized
+        500:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: false
+                  message: 'An error occurred Internal Server Error'
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: 'An error occurred Internal Server Error'
+      tags:
+        - 'User Profile'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: "optional The user's name."
+                  example: '"John Doe"'
+                  nullable: false
+                email:
+                  type: string
+                  description: "optional The user's email address."
+                  example: '"john@example.com"'
+                  nullable: false
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'The ID of the user.'
+        example: 1
+        required: true
+        schema:
+          type: integer
+tags:
+  -
+    name: Authentication
+    description: "\nAPIs for user registration, login, and logout."
+  -
+    name: 'Home Page'
+    description: "\nAPIs for managing posts home page, search."
+  -
+    name: 'Post User'
+    description: "\nAPIs for managing Comments,likes, posts."
+  -
+    name: 'User '
+    description: "\nAPIs for managing friend request, accept and reject friends , show friends."
+  -
+    name: 'User Profile'
+    description: "\nAPIs for managing user profile, friends, posts, and password changes."

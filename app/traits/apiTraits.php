@@ -13,14 +13,14 @@ Trait apiTraits {
            'number'=>$NumError
         ]);
   }
-  public function ReturnSuccessMessage($message = "",$NumSuccess = "0000"){
+  public function ReturnSuccessMessage($message = "",$NumSuccess = "200"){
           return response()->json([
           'status'=>'true',
           'message'=>$message,
           'number'=>$NumSuccess
           ]);
   }
-  public function ReturnData($key,$value,$message = "",$NumSuccess ='0000'){
+  public function ReturnData($key,$value,$message = "",$NumSuccess ='200'){
           return response()->json([
               'status'=>'true',
               'message'=>$message,
@@ -32,7 +32,7 @@ Trait apiTraits {
 
         $validation = Validator::make($request->all(),$rules);
         if ($validation->fails()) {
-          return $this->ReturnErrorMessage($validation->messages()->first(),'900');
+          return $this->ReturnErrorMessage($validation->messages()->first(),'422');
         }
   }
 

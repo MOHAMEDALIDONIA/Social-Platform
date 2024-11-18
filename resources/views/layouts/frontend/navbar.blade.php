@@ -16,11 +16,11 @@
      
 
     </div>
-    <form class="form-inline mt-2">
+    <form class="form-inline mt-2" action="{{route('searh.users')}}" method="GET">
         <div class="input-group">
-            <input type="text" class="form-control" aria-label="Recipient's username" aria-describedby="button-addon2">
+            <input type="text" name="search" class="form-control" aria-label="Recipient's username" aria-describedby="button-addon2">
             <div class="input-group-append">
-                <button class="btn btn-outline-primary" type="button" id="button-addon2">
+                <button class="btn btn-outline-primary" type="submit" id="button-addon2">
                     <i class="fa fa-search"></i>
                 </button>
             </div>

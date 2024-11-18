@@ -22,8 +22,10 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:sanctum')->group(function() {
     Route::delete('/logout', [AuthController::class, 'logout']);
+    
        //------- Start Home Page ------- //
           Route::get('/', [HomeController::class,'view']);
+          Route::get('/search', [HomeController::class,'search']);
        //------- End Home Page ------- //
      //------- Start User actions ------- //
  Route::prefix('/Users')->controller(UserController::class)->group(function(){

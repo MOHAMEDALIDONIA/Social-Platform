@@ -13,150 +13,375 @@ use App\traits\savephoto;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
-
+/**
+ * @group Post User
+ * 
+ * APIs for managing Comments,likes, posts.
+ */
 class PostController extends Controller
 {
-     use apiTraits,savephoto;
-     protected $Service;
+    use apiTraits, savephoto;
+    protected $Service;
 
-     public function __construct(PostServices $Service)
-     {
-         $this->Service = $Service;
-     }
+    public function __construct(PostServices $Service)
+    {
+        $this->Service = $Service;
+    }
+
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created post in storage.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     *
+     * @bodyParam content string required The content of the post. Example: "This is a new post."
+     * @bodyParam image file optional The image attached to the post.
+     *
+     * @response 201 {
+     *   "status": true,
+     *   "message": "Added Post Successfully",
+     *   "data": {
+     *     "id": 1,
+     *     "content": "This is a new post.",
+     *     "user_id": 1,
+     *     "created_at": "2024-11-18T12:00:00Z",
+     *     // Other post fields
+     *   }
+     * }
+     *
+     * @response 400 {
+     *   "status": false,
+     *   "message": "Validation error."
+     * }
+     *
+     * @response 500 {
+     *   "status": false,
+     *   "message": "An error occurred Internal Server Error"
+     * }
      */
     public function store(Request $request)
     {
-                   //validation request 
-       
-                    $massage= $this->ReturnValidationError($request,['content' => ['required', 'string'],'image'=>['nullable']]);
-                    if(isset($massage)){
-                        return $massage;
-                    }
-                
-                    $post = $this->Service->StorePost($request);
+        try {
+            // Validation request
+            $message = $this->ReturnValidationError($request, ['content' => ['required', 'string'], 'image' => ['nullable']]);
+            if (isset($message)) {
+                return $message;
+            }
 
-                    return $this->ReturnData('post',$post,"Added Post SUccessfully");
-         
-       
-    }
+            $post = $this->Service->StorePost($request);
 
-    public function edit(string $id)
-    {
-        $post = Post::FindOrFail($id);
-           // authorization
-
-        if ($post->user->id !== Auth::guard('sanctum')->user()->id) {
-             return  $this->ReturnErrorMessage("unauthorized","403");
-         }
-
-        $data = ['post'=>$post];
-        return  $this->ReturnData('data',$data,"Success show user");
+            return $this->ReturnData('post', $post, "Added Post Successfully", "201");
+        } catch (\Exception $th) {
+            return $this->ReturnErrorMessage("An error occurred Internal Server Error", "500");
+        }
     }
 
     /**
-     * Update the specified resource in storage.
+     * Show the details of the post to be edited.
+     *
+     * @param string $id
+     * @return \Illuminate\Http\JsonResponse
+     *
+     * @response 200 {
+     *   "status": true,
+     *   "message": "Success show user",
+     *   "data": {
+     *     "post": {
+     *       "id": 1,
+     *       "content": "This is a post",
+     *       "user_id": 1,
+     *       "created_at": "2024-11-18T12:00:00Z",
+     *       // Additional post fields
+     *     }
+     *   }
+     * }
+     *
+     * @response 403 {
+     *   "status": false,
+     *   "message": "Unauthorized"
+     * }
+     *
+     * @response 500 {
+     *   "status": false,
+     *   "message": "An error occurred Internal Server Error"
+     * }
+     */
+    public function edit(string $id)
+    {
+        try {
+            $post = Post::FindOrFail($id);
+            
+            // Authorization check
+            if ($post->user->id !== Auth::guard('sanctum')->user()->id) {
+                return $this->ReturnErrorMessage("Unauthorized", "403");
+            }
+
+            $data = ['post' => $post];
+            return $this->ReturnData('data', $data, "Success show user");
+        } catch (\Exception $th) {
+            return $this->ReturnErrorMessage("An error occurred Internal Server Error", "500");
+        }
+    }
+
+    /**
+     * Update the specified post in storage.
+     *
+     * @param Request $request
+     * @param string $id
+     * @return \Illuminate\Http\JsonResponse
+     *
+     * @bodyParam content string required The updated content of the post. Example: "Updated post content."
+     * @bodyParam image file optional The updated image attached to the post.
+     *
+     * @response 200 {
+     *   "status": true,
+     *   "message": "Updated Post Successfully"
+     * }
+     *
+     * @response 403 {
+     *   "status": false,
+     *   "message": "Unauthorized"
+     * }
+     *
+     * @response 500 {
+     *   "status": false,
+     *   "message": "An error occurred Internal Server Error"
+     * }
      */
     public function update(Request $request, string $id)
     {
-    
+        try {
             $post = Post::findOrFail($id);
-                // authorization
-        
+            
+            // Authorization check
             if ($post->user->id !== Auth::guard('sanctum')->user()->id) {
-                return  $this->ReturnErrorMessage("unauthorized","403");
+                return $this->ReturnErrorMessage("Unauthorized", "403");
             }
-                
-                //validation request 
-        
-                $massage= $this->ReturnValidationError($request,['content' => ['required', 'string'], 'image'=>['nullable' ]]);
-                if(isset($massage)){
-                    return $massage;
-                }
-                //update content post
-                $post->update([
-                'content' => $request->content
-                ]);
-                // upload images if they exist
-                if($request->hasFile('image')){
-                    $this->Service->UploadPostImages($request->file('image'),$post);
-                }
-                return $this->ReturnSuccessMessage("Updated Post SUccessfully");
 
-      
-     
+            // Validation request
+            $message = $this->ReturnValidationError($request, ['content' => ['required', 'string'], 'image' => ['nullable']]);
+            if (isset($message)) {
+                return $message;
+            }
+
+            // Update content of post
+            $post->update(['content' => $request->content]);
+
+            // Upload image if exists
+            if ($request->hasFile('image')) {
+                $this->Service->UploadPostImages($request->file('image'), $post);
+            }
+
+            return $this->ReturnSuccessMessage("Updated Post Successfully");
+        } catch (\Exception $th) {
+            return $this->ReturnErrorMessage("An error occurred Internal Server Error", "500");
+        }
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the specified post from storage.
+     *
+     * @param string $id
+     * @return \Illuminate\Http\JsonResponse
+     *
+     * @response 200 {
+     *   "status": true,
+     *   "message": "Deleted Post Successfully"
+     * }
+     *
+     * @response 403 {
+     *   "status": false,
+     *   "message": "Unauthorized"
+     * }
+     *
+     * @response 500 {
+     *   "status": false,
+     *   "message": "An error occurred Internal Server Error"
+     * }
      */
     public function destroy(string $id)
     {
-        $post = Post::findOrFail($id);
-           // authorization
+        try {
+            $post = Post::findOrFail($id);
+            
+            // Authorization check
+            if ($post->user->id !== Auth::guard('sanctum')->user()->id) {
+                return $this->ReturnErrorMessage("Unauthorized", "403");
+            }
 
-       if ($post->user->id !== Auth::guard('sanctum')->user()->id) {
-          return  $this->ReturnErrorMessage("unauthorized","403");
-       }
-       if($post->images()){
-        foreach($post->images() as $image){
-            $this->DeleteImageFile($image->image);
+            // Delete post images if they exist
+            if ($post->images()) {
+                foreach ($post->images() as $image) {
+                    $this->DeleteImageFile($image->image);
+                }
+                $post->images()->delete();
+            }
+
+            // Delete the post
+            $post->delete();
+            return $this->ReturnSuccessMessage("Deleted Post Successfully");
+        } catch (\Exception $th) {
+            return $this->ReturnErrorMessage("An error occurred Internal Server Error", "500");
         }
-        $post->images()->delete();
-      }
-        $post->delete();
-        return $this->ReturnSuccessMessage("Deleted Post SUccessfully");
-
     }
 
-    public function destoryPostImage(int $image_id){
-        $postImage= PostImage::findOrfail($image_id);
-        if($this->DeleteImageFile($postImage->image)){
-           
-            $postImage->delete();
+    /**
+     * Delete a post image.
+     *
+     * @param int $image_id
+     * @return \Illuminate\Http\JsonResponse
+     *
+     * @response 200 {
+     *   "status": true,
+     *   "message": "Post Image Deleted Successfully"
+     * }
+     *
+     * @response 500 {
+     *   "status": false,
+     *   "message": "An error occurred Internal Server Error"
+     * }
+     */
+    public function destoryPostImage(int $image_id)
+    {
+        try {
+            $postImage = PostImage::findOrFail($image_id);
+
+            // Delete image file
+            if ($this->DeleteImageFile($postImage->image)) {
+                $postImage->delete();
+            }
+
+            return $this->ReturnSuccessMessage('Post Image Deleted Successfully');
+        } catch (\Exception $th) {
+            return $this->ReturnErrorMessage("An error occurred Internal Server Error", "500");
         }
-       
-       return $this->ReturnSuccessMessage('Post Image Deleted Successfully');
     }
-    public function CreateComment(Request $request,int $post_id){
-        //validation request
- 
-          $massage= $this->ReturnValidationError($request,['content' => ['required', 'string'], 'image'=>['nullable' ]]);
-          if(isset($massage)){
-            return $massage;
-          }
-           // add comment to database
-          $comment = Comment::create([
-               'user_id' => auth('sanctum')->user()->id,
-               'post_id'=> $post_id,
-               'content'=>$request->content
-           ]);
-           //fecth user name 
-             $user_name = $comment->user->name;
-           //success 
-           return $this->ReturnData('data',$user_name,"success comment");
+
+    /**
+     * Create a comment for a post.
+     *
+     * @param Request $request
+     * @param int $post_id
+     * @return \Illuminate\Http\JsonResponse
+     *
+     * @bodyParam content string required The content of the comment. Example: "Great post!"
+     * @bodyParam image file optional The image attached to the comment.
+     *
+     * @response 200 {
+     *   "status": true,
+     *   "message": "success comment",
+     *   "data": "John Doe"
+     * }
+     *
+     * @response 500 {
+     *   "status": false,
+     *   "message": "An error occurred Internal Server Error"
+     * }
+     */
+    public function CreateComment(Request $request, int $post_id)
+    {
+        try {
+            // Validation request
+            $message = $this->ReturnValidationError($request, ['content' => ['required', 'string'], 'image' => ['nullable']]);
+            if (isset($message)) {
+                return $message;
+            }
+
+            // Add comment to database
+            $comment = Comment::create([
+                'user_id' => auth('sanctum')->user()->id,
+                'post_id' => $post_id,
+                'content' => $request->content
+            ]);
+
+            // Fetch user name
+            $user_name = $comment->user->name;
+
+            return $this->ReturnData('data', $user_name, "success comment");
+        } catch (\Exception $th) {
+            return $this->ReturnErrorMessage("An error occurred Internal Server Error", "500");
+        }
     }
-    public function likePost(Request $request,int $post_id){
-              // add like to database
-              $UserLikedPost = Like::where('user_id',$request->user()->id)->where('post_id',$post_id);
-              if ($UserLikedPost->exists()) {
-                 $UserLikedPost->delete();
-              } else {
+
+    /**
+     * Like or unlike a post.
+     *
+     * @param Request $request
+     * @param int $post_id
+     * @return \Illuminate\Http\JsonResponse
+     *
+     * @response 200 {
+     *   "status": true,
+     *   "message": "Liked Post",
+     *   "data": {
+     *     "likes_count": 5
+     *   }
+     * }
+     *
+     * @response 500 {
+     *   "status": false,
+     *   "message": "An error occurred Internal Server Error"
+     * }
+     */
+    public function likePost(Request $request, int $post_id)
+    {
+        try {
+            $UserLikedPost = Like::where('user_id', $request->user()->id)->where('post_id', $post_id);
+
+            if ($UserLikedPost->exists()) {
+                $UserLikedPost->delete();
+            } else {
                 $UserLikedPost->create([
-                   'user_id' => auth()->user()->id,
-                   'post_id'=>$post_id
+                    'user_id' => auth()->user()->id,
+                    'post_id' => $post_id
                 ]);
-              }
-              $likes = Like::where('post_id',$post_id)->count();
-             return $this->ReturnData('likes_count',$likes,"Liked Post");
+            }
+
+            // Get updated likes count
+            $likes = Like::where('post_id', $post_id)->count();
+            return $this->ReturnData('likes_count', $likes, "Liked Post");
+        } catch (\Exception $th) {
+            return $this->ReturnErrorMessage("An error occurred Internal Server Error", "500");
+        }
     }
-    public function PostLikes(Request $request,int $post_id){
-      $post = Post::findOrFail($post_id);
-      $usersLiked =  $post->likes()->select('id','user_id')->with(['user'=>function($q){
-         $q->select('id','name','image');
-      }])->get()->pluck('user');
-       
-      return $this->ReturnData('users',$usersLiked,"user like post");
+
+    /**
+     * Get the users who liked a post.
+     *
+     * @param Request $request
+     * @param int $post_id
+     * @return \Illuminate\Http\JsonResponse
+     *
+     * @response 200 {
+     *   "status": true,
+     *   "message": "user like post",
+     *   "data": [
+     *     {
+     *       "id": 1,
+     *       "name": "John Doe",
+     *       "image": "/images/johndoe.jpg"
+     *     },
+     *     // Other users
+     *   ]
+     * }
+     *
+     * @response 500 {
+     *   "status": false,
+     *   "message": "An error occurred Internal Server Error"
+     * }
+     */
+    public function PostLikes(Request $request, int $post_id)
+    {
+        try {
+            $post = Post::findOrFail($post_id);
+
+            $usersLiked = $post->likes()->select('id', 'user_id')->with(['user' => function ($q) {
+                $q->select('id', 'name', 'image');
+            }])->get()->pluck('user');
+
+            return $this->ReturnData('users', $usersLiked, "user like post");
+        } catch (\Exception $th) {
+            return $this->ReturnErrorMessage("An error occurred Internal Server Error", "500");
+        }
     }
 }

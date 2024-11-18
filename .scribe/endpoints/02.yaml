@@ -1,0 +1,345 @@
+name: 'User '
+description: |-
+
+  APIs for managing friend request, accept and reject friends , show friends.
+endpoints:
+  -
+    httpMethods:
+      - GET
+    uri: api/v1/Users/SuggestedConnections
+    metadata:
+      groupName: 'User '
+      groupDescription: |-
+
+        APIs for managing friend request, accept and reject friends , show friends.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Retrieve suggested connections for the authenticated user.'
+      description: ''
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        status: 200
+        content: |-
+          {
+            "status": true,
+            "message": "Suggested connections fetched successfully",
+            "data": [
+              {
+                "id": 2,
+                "name": "John Doe",
+                "email": "john@example.com",
+                // Additional user fields
+              }
+            ]
+          }
+        headers: []
+        description: ''
+        custom: []
+      -
+        status: 500
+        content: |-
+          {
+            "status": false,
+            "message": "An error occurred Internal Server Error"
+          }
+        headers: []
+        description: ''
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - GET
+    uri: api/v1/Users/friend-requests
+    metadata:
+      groupName: 'User '
+      groupDescription: |-
+
+        APIs for managing friend request, accept and reject friends , show friends.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Retrieve all friend requests for the authenticated user.'
+      description: ''
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        status: 200
+        content: |-
+          {
+            "status": true,
+            "message": "Friend Requests fetched successfully",
+            "data": [
+              {
+                "id": 1,
+                "sender_id": 3,
+                "receiver_id": 2,
+                "status": "pending",
+                // Additional friend request fields
+              }
+            ]
+          }
+        headers: []
+        description: ''
+        custom: []
+      -
+        status: 500
+        content: |-
+          {
+            "status": false,
+            "message": "An error occurred Internal Server Error"
+          }
+        headers: []
+        description: ''
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - POST
+    uri: api/v1/Users/send-friend-request
+    metadata:
+      groupName: 'User '
+      groupDescription: |-
+
+        APIs for managing friend request, accept and reject friends , show friends.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Send a friend request to another user.'
+      description: ''
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      friend_id:
+        name: friend_id
+        description: 'The ID of the user to send a friend request to.'
+        required: true
+        example: 5
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+    cleanBodyParameters:
+      friend_id: 5
+    fileParameters: []
+    responses:
+      -
+        status: 200
+        content: |-
+          {
+            "status": true,
+            "message": "Friend request sent successfully"
+          }
+        headers: []
+        description: ''
+        custom: []
+      -
+        status: 400
+        content: |-
+          {
+            "status": false,
+            "message": "Friend request already exists"
+          }
+        headers: []
+        description: ''
+        custom: []
+      -
+        status: 500
+        content: |-
+          {
+            "status": false,
+            "message": "An error occurred Internal Server Error"
+          }
+        headers: []
+        description: ''
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - POST
+    uri: api/v1/Users/accept-friend-request
+    metadata:
+      groupName: 'User '
+      groupDescription: |-
+
+        APIs for managing friend request, accept and reject friends , show friends.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Accept a pending friend request.'
+      description: ''
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      friend_request_id:
+        name: friend_request_id
+        description: 'The ID of the friend request to accept.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+    cleanBodyParameters:
+      friend_request_id: 1
+    fileParameters: []
+    responses:
+      -
+        status: 200
+        content: |-
+          {
+            "status": true,
+            "message": "Friend request accepted successfully"
+          }
+        headers: []
+        description: ''
+        custom: []
+      -
+        status: 400
+        content: |-
+          {
+            "status": false,
+            "message": "Friend request not found"
+          }
+        headers: []
+        description: ''
+        custom: []
+      -
+        status: 500
+        content: |-
+          {
+            "status": false,
+            "message": "An error occurred Internal Server Error"
+          }
+        headers: []
+        description: ''
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - DELETE
+    uri: api/v1/Users/reject-friend-request
+    metadata:
+      groupName: 'User '
+      groupDescription: |-
+
+        APIs for managing friend request, accept and reject friends , show friends.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Reject a pending friend request.'
+      description: ''
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      friend_request_id:
+        name: friend_request_id
+        description: 'The ID of the friend request to reject.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+    cleanBodyParameters:
+      friend_request_id: 1
+    fileParameters: []
+    responses:
+      -
+        status: 200
+        content: |-
+          {
+            "status": true,
+            "message": "Friend request rejected successfully"
+          }
+        headers: []
+        description: ''
+        custom: []
+      -
+        status: 400
+        content: |-
+          {
+            "status": false,
+            "message": "Friend request not found"
+          }
+        headers: []
+        description: ''
+        custom: []
+      -
+        status: 500
+        content: |-
+          {
+            "status": false,
+            "message": "An error occurred Internal Server Error"
+          }
+        headers: []
+        description: ''
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
