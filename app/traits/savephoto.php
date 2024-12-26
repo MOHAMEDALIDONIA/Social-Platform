@@ -20,7 +20,11 @@ Trait savephoto {
             $img=$img->toJpeg(80)->save(public_path('/storage/'.$flodername.'/'.$ext));
             $path = $flodername.'/'.$ext;
             return $path;
-            
+           // $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+            // $nameImage = time().'_'.$originalName.'.'.$file->getClientOriginalExtension();
+            // $path = $file->storeAs($flodername,$nameImage,'storage');
+            // return $path;
+                
             
         
       
